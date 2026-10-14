@@ -9,7 +9,7 @@
 		<architecture name="arm64" />
 		<architecture exclude="armv7" />
 		<architecture exclude="x86" />
-		<architecture exclude="x86_64" />
+		<architecture exclude="x64" />
 		<app title="Pinkie From FNF" file="Pinkie" package="com.carlos833.pinkiefnf" packageName="com.carlos833.pinkiefnf" />
 		<android minimum-sdk-version="23" target-sdk-version="33" build-sdk-version="33" build-tools-version="33.0.2" gradle-version="7.5.1" gradle-plugin="7.4.2" />
 	</section>
@@ -27,7 +27,7 @@
 	<!-- ____________________________ Window Settings ___________________________ -->
 
 	<!--These window settings apply to all targets-->
-	<window width="1280" height="720" fps="" background="#000000" hardware="true" vsync="false" />
+	<window width="1280" height="720" fps="60" background="#000000" hardware="true" vsync="false" />
 
 	<!--HTML5-specific-->
 	<window if="html5" resizable="true" />

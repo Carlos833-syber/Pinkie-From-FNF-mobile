@@ -21,7 +21,7 @@ separate runs may require uninstalling the old APK, which removes its saved data
 | Android SDK / build tools | 33 / 33.0.2 |
 | Android NDK | 21.4.7075529 |
 | Gradle / Android Gradle plugin | 7.5.1 / 7.4.2 |
-| Lime / OpenFL | 8.0.2 / 9.2.2 |
+| Lime / OpenFL | 8.1.3 / 9.2.2 |
 | HaxeFlixel / addons / UI | 4.11.0 / 2.11.0 / 2.5.0 |
 | hxcpp / hscript | 4.2.1 / 2.5.0 |
 | newgrounds / polymod | 1.1.5 / 1.3.1 |

@@ -7,7 +7,7 @@ set -euo pipefail
 : "${JAVA_HOME:?Set JAVA_HOME to a Java 11 JDK}"
 
 haxelib install hxcpp 4.2.1 --quiet --skip-dependencies
-haxelib install lime 8.0.2 --quiet --skip-dependencies
+haxelib install lime 8.1.3 --quiet --skip-dependencies
 haxelib install openfl 9.2.2 --quiet --skip-dependencies
 haxelib install flixel 4.11.0 --quiet --skip-dependencies
 haxelib install flixel-addons 2.11.0 --quiet --skip-dependencies

@@ -68,6 +68,9 @@ the library as an asset type and failed when entering songs.
 The Android canvas stays at **1280×720 (16:9)**, centered with black bars as needed.
 It does not stretch to the phone's aspect ratio, and Android fullscreen is disabled.
 The touch overlay follows the same viewport; taps in the black bars are ignored.
+The scale mode is configured after attaching `FlxGame` to the stage. Its setter
+immediately resizes the active state, so setting it before attachment crashes
+at launch because the state and debug overlay have not been created yet.
 
 - Menus and pause/game-over screens: Psych mobile directional pad, **A** to accept,
   **B** to go back.
@@ -99,6 +102,8 @@ frame geometry, rotations, flips, clipping, sprite reuse and thumbnail transform
 against the real Flixel/OpenFL classes. It does not render on a GPU. The packaged
 path/Lua test also requires those libraries; it exercises the real resolvers and
 pinned LuaVM with controlled asset/Lua API test doubles.
+`bash tests/run-android-startup.sh` also checks the startup resize lifecycle and
+the initialization order in `Main.hx`.
 
 Desktop MP4 playback is unavailable on Android in this engine. The Android path
 continues into the existing dialogue/gameplay flow instead of calling the

@@ -83,11 +83,12 @@ class Main extends Sprite
 		#end
 
 		var game = new FlxGame(gameWidth, gameHeight, initialState, zoom, framerate, framerate, skipSplash, startFullscreen);
+		addChild(game);
 		#if android
+		// The scale-mode setter resizes the active state, which exists only after attachment.
 		FlxG.scaleMode = new RatioScaleMode(false);
 		FlxG.android.preventDefaultKeys = [BACK];
 		#end
-		addChild(game);
 
 		#if android
 		addChild(new AndroidControls());

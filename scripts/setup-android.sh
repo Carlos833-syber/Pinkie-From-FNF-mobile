@@ -2,7 +2,7 @@
 # Run from the repository root on Linux after installing Haxe, Neko and the NDK.
 set -euo pipefail
 
-: "${ANDROID_NDK_ROOT:?Set ANDROID_NDK_ROOT to NDK 25.2.9519653}"
+: "${ANDROID_NDK_ROOT:?Set ANDROID_NDK_ROOT to NDK 21.4.7075529}"
 : "${ANDROID_SDK_ROOT:?Set ANDROID_SDK_ROOT to the Android SDK}"
 : "${JAVA_HOME:?Set JAVA_HOME to a Java 11 JDK}"
 

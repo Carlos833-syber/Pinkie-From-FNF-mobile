@@ -19,7 +19,7 @@ separate runs may require uninstalling the old APK, which removes its saved data
 | Haxe | 4.2.5 |
 | Java for compilation | 11 |
 | Android SDK / build tools | 33 / 33.0.2 |
-| Android NDK | 25.2.9519653 |
+| Android NDK | 21.4.7075529 |
 | Gradle / Android Gradle plugin | 7.5.1 / 7.4.2 |
 | Lime / OpenFL | 8.0.2 / 9.2.2 |
 | HaxeFlixel / addons / UI | 4.11.0 / 2.11.0 / 2.5.0 |
@@ -41,7 +41,7 @@ repository's root:
 
 ```bash
 export ANDROID_SDK_ROOT=/path/to/android-sdk
-export ANDROID_NDK_ROOT="$ANDROID_SDK_ROOT/ndk/25.2.9519653"
+export ANDROID_NDK_ROOT="$ANDROID_SDK_ROOT/ndk/21.4.7075529"
 export JAVA_HOME=/path/to/jdk-11
 export PATH="$JAVA_HOME/bin:$PATH"
 bash scripts/setup-android.sh

@@ -6,6 +6,10 @@
 
 	<!--Switch Export with Unique ApplicationID and Icon-->
 	<section if="android">
+		<architecture name="arm64" />
+		<architecture exclude="armv7" />
+		<architecture exclude="x86" />
+		<architecture exclude="x86_64" />
 		<app title="Pinkie From FNF" file="Pinkie" package="com.carlos833.pinkiefnf" packageName="com.carlos833.pinkiefnf" />
 		<android minimum-sdk-version="23" target-sdk-version="33" build-sdk-version="33" build-tools-version="33.0.2" gradle-version="7.5.1" gradle-plugin="7.4.2" />
 	</section>

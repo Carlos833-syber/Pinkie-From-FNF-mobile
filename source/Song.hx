@@ -65,16 +65,21 @@ class Song
 
 	public static function loadFromJson(jsonInput:String, ?folder:String):SwagSong
 	{
+		if (folder == null)
+			folder = jsonInput;
 		if (!Paths.exists(Paths.json(folder.toLowerCase() + '/' + jsonInput.toLowerCase())))
 		{
 			return null;
 		}
 		var rawJson = Paths.readText(Paths.json(folder.toLowerCase() + '/' + jsonInput.toLowerCase())).trim();
 
-		while (!rawJson.endsWith("}"))
+		while (rawJson.length > 0 && !rawJson.endsWith("}"))
 		{
 			rawJson = rawJson.substr(0, rawJson.length - 1);
 		}
+
+		if (rawJson.length == 0)
+			throw "Empty or invalid song chart: " + folder + "/" + jsonInput;
 
 		return parseJSONshit(rawJson);
 	}

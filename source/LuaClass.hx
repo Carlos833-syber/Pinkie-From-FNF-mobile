@@ -579,7 +579,7 @@ class LuaSprite extends LuaClass
 			LuaL.error(state, path + " is not a valid spritesheet!");
 			return 0;
 		}
-		var frames = FlxAtlasFrames.fromSparrow(bitmapData, content);
+		var frames = Paths.getSparrowFrames(bitmapData, content);
 		sprite.setFrames(frames);
 		return 0;
 	}

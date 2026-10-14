@@ -3,3 +3,5 @@ sourcePinkie/
 assetsPinkie/
 .vscode/
 APIStuff.hx
+__pycache__/
+*.pyc

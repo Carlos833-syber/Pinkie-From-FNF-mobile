@@ -9,6 +9,7 @@ on:
       - 'example_mods/**'
       - 'Project.xml'
       - 'scripts/**'
+      - 'tests/**'
       - '.github/workflows/android.yml'
   pull_request:
     paths:
@@ -17,6 +18,7 @@ on:
       - 'example_mods/**'
       - 'Project.xml'
       - 'scripts/**'
+      - 'tests/**'
       - '.github/workflows/android.yml'
 
 permissions:
@@ -41,6 +43,16 @@ jobs:
           haxe --version
           neko -version
           haxelib setup "$RUNNER_TEMP/pinkie-haxelib"
+      - name: Check touch input
+        run: bash tests/run-android-touch.sh
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Check and prepare Android textures
+        run: |
+          python3 -m pip install -r scripts/requirements-android-assets.txt
+          python3 -m unittest discover -s tests -p 'test_android_assets.py'
+          python3 scripts/prepare-android-assets.py assets
       - name: Java for Android SDK tools
         uses: actions/setup-java@v4
         with:
@@ -61,6 +73,10 @@ jobs:
         env:
           ANDROID_NDK_ROOT: ${{ env.ANDROID_SDK_ROOT }}/ndk/21.4.7075529
         run: bash scripts/setup-android.sh
+      - name: Check packaged paths, Lua stack and atlas geometry
+        run: |
+          python3 scripts/test-asset-paths.py
+          bash tests/run-android-atlas.sh
       - name: Build ARM64 debug APK
         env:
           ANDROID_NDK_ROOT: ${{ env.ANDROID_SDK_ROOT }}/ndk/21.4.7075529

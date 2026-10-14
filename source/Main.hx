@@ -1,6 +1,10 @@
 package;
 
 import flixel.FlxGame;
+#if android
+import flixel.FlxG;
+import flixel.system.scaleModes.RatioScaleMode;
+#end
 import flixel.FlxState;
 import openfl.Assets;
 import openfl.Lib;
@@ -56,6 +60,10 @@ class Main extends Sprite
 		var stageWidth:Int = Lib.current.stage.stageWidth;
 		var stageHeight:Int = Lib.current.stage.stageHeight;
 
+		#if android
+		// Keep the Psych 1280x720 canvas; RatioScaleMode adds letterboxing.
+		zoom = 1;
+		#else
 		if (zoom == -1)
 		{
 			var ratioX:Float = stageWidth / gameWidth;
@@ -64,12 +72,22 @@ class Main extends Sprite
 			gameWidth = Math.ceil(stageWidth / zoom);
 			gameHeight = Math.ceil(stageHeight / zoom);
 		}
+		#end
 
 		#if !debug
 		initialState = Startup;
 		#end
+		#if android
+		// Startup pre-renders unused Discord animation atlases into hundreds of bitmaps.
+		initialState = TitleState;
+		#end
 
-		addChild(new FlxGame(gameWidth, gameHeight, initialState, zoom, framerate, framerate, skipSplash, startFullscreen));
+		var game = new FlxGame(gameWidth, gameHeight, initialState, zoom, framerate, framerate, skipSplash, startFullscreen);
+		#if android
+		FlxG.scaleMode = new RatioScaleMode(false);
+		FlxG.android.preventDefaultKeys = [BACK];
+		#end
+		addChild(game);
 
 		#if android
 		addChild(new AndroidControls());

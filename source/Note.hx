@@ -122,7 +122,7 @@ class Note extends FlxSprite
 					}
 				}
 				trace(daTex + ": " + path);
-				frames = FlxAtlasFrames.fromSparrow(Paths.getbmp(daTex), Paths.readText(path)); // Paths.getSparrowAtlas('NOTE_assets');
+				frames = Paths.getSparrowFrames(Paths.getbmp(daTex), Paths.readText(path)); // Paths.getSparrowAtlas('NOTE_assets');
 
 				animation.addByPrefix('greenScroll', 'green0');
 				animation.addByPrefix('redScroll', 'red0');
@@ -216,6 +216,7 @@ class Note extends FlxSprite
 			var gra:FlxGraphic;
 			var bmp = Paths.readBitmap(path);
 			gra = FlxGraphic.fromBitmapData(bmp, false, char, false);
+			Paths.trackGraphicAsset(gra, path);
 			gra.persist = true;
 			noteBitmaps.set(char, gra);
 		}

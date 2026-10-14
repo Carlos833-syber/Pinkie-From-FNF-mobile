@@ -4,6 +4,7 @@ import flixel.FlxG;
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.system.FlxAssets.FlxSoundAsset;
+import flixel.system.FlxAssets.FlxGraphicAsset;
 import openfl.display.BitmapData;
 import openfl.utils.AssetType;
 import openfl.media.Sound;
@@ -67,6 +68,7 @@ class Paths
 
 	static var currentLevel:String;
 	public static var imgCache:Map<String, FlxGraphic> = new Map<String, FlxGraphic>();
+	static var graphicAssetIds:Map<FlxGraphic, String> = [];
 
 	static public function setCurrentLevel(name:String)
 	{
@@ -256,10 +258,48 @@ class Paths
 					path = "assets/shared/images/" + key + ".png";
 			}
 			var graphic = FlxGraphic.fromBitmapData(readBitmap(path), false, key, false);
+			trackGraphicAsset(graphic, path);
 			graphic.persist = true;
 			imgCache.set(key, graphic);
 		}
 		return imgCache.get(key);
+	}
+
+	/** Remember the packaged bitmap owned by a manually created graphic. */
+	public static function trackGraphicAsset(graphic:FlxGraphic, path:String):Void
+	{
+		if (!FileSystem.exists(path))
+			graphicAssetIds.set(graphic, assetId(path));
+	}
+
+	/** Release only graphics no surviving sprite uses, including their packaged bitmap. */
+	public static function releaseUnusedGraphics(cache:Map<String, FlxGraphic>):Void
+	{
+		for (key in cache.keys())
+		{
+			var graphic = cache.get(key);
+			if (graphic == null || graphic.bitmap == null)
+			{
+				if (graphic != null)
+					graphicAssetIds.remove(graphic);
+				cache.remove(key);
+				continue;
+			}
+			if (graphic.useCount > 0)
+				continue;
+			var assetKey = graphicAssetIds.get(graphic);
+			if (assetKey == null)
+				assetKey = graphic.assetsKey;
+			if (assetKey != null)
+				OpenFlAssets.cache.removeBitmapData(assetKey);
+			graphicAssetIds.remove(graphic);
+			graphic.persist = false;
+			if (FlxG.bitmap.get(graphic.key) == graphic)
+				FlxG.bitmap.remove(graphic);
+			else
+				graphic.destroy();
+			cache.remove(key);
+		}
 	}
 
 	public static function compress()
@@ -280,18 +320,28 @@ class Paths
 		return readText(key);
 	}
 
+	/** Share the Android atlas loader across characters, notes and Lua sprites. */
+	public static function getSparrowFrames(source:FlxGraphicAsset, description:String):FlxAtlasFrames
+	{
+		#if android
+		return AndroidAtlasFrames.fromSparrow(source, description);
+		#else
+		return FlxAtlasFrames.fromSparrow(source, description);
+		#end
+	}
+
 	inline static public function getSparrowAtlas(key:String, ?library:String)
 	{
-		return FlxAtlasFrames.fromSparrow(image(key, library), file('images/$key.xml', library));
+		return getSparrowFrames(image(key, library), readText(file('images/$key.xml', TEXT, library)));
 	}
 
 	inline static public function getPackerAtlasJson(key:String, ?library:String)
 	{
-		return FlxAtlasFrames.fromTexturePackerJson(image(key, library), file('images/$key.json', library));
+		return FlxAtlasFrames.fromTexturePackerJson(image(key, library), file('images/$key.json', TEXT, library));
 	}
 
 	inline static public function getPackerAtlas(key:String, ?library:String)
 	{
-		return FlxAtlasFrames.fromSpriteSheetPacker(image(key, library), file('images/$key.txt', library));
+		return FlxAtlasFrames.fromSpriteSheetPacker(image(key, library), file('images/$key.txt', TEXT, library));
 	}
 }

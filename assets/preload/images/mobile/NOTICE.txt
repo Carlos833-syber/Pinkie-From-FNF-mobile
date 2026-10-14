@@ -1,0 +1,15 @@
+Psych Engine Mobile controls
+
+The unmodified pauseButton.png and virtualpad/*.png assets are from:
+https://github.com/Carlos833-syber/Psych-Engine-0.7.3-Mobile
+Commit: cc7ac693dff78e968f9d4e14e6b48639d575f2a0
+
+Psych Engine credits: Shadow Mario (programmer), Riveren (artist).
+Mobile credits: StarNova (Cream.BR), LumiCoder (FNF BR).
+
+These assets are redistributed under Apache License 2.0. See
+LICENSE-PSYCH.txt in this directory for the full license.
+
+The control layout, colors, hitbox dimensions and pause placement are
+adapted from MobileVirtualPad.hx, MobileHitbox.hx and PauseButton.hx.
+The Android input adapter is a new implementation for Andromeda Engine.

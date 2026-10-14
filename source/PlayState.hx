@@ -304,13 +304,15 @@ class PlayState extends MusicBeatState
 
 	override public function create()
 	{
-		Paths.imgCache.clear();
+		if (SONG == null)
+			SONG = Song.loadFromJson('tutorial', 'tutorial');
+
 		Cache.Clear();
 		instance = this;
 		fpsRatio = (openfl.Lib.current.stage.frameRate / 60);
-		Cache.Clear();
 		modchart = new ModChart(this);
-		FlxG.sound.music.looped = false;
+		if (FlxG.sound.music != null)
+			FlxG.sound.music.looped = false;
 		unnamedLuaSprites = 0;
 		currentPState = this;
 		currentOptions = OptionUtils.options.clone();
@@ -369,9 +371,6 @@ class PlayState extends MusicBeatState
 
 		persistentUpdate = true;
 		persistentDraw = true;
-
-		if (SONG == null)
-			SONG = Song.loadFromJson('tutorial');
 
 		SONG.initialSpeed = SONG.speed * .45;
 
@@ -1044,7 +1043,7 @@ class PlayState extends MusicBeatState
 		startingSong = true;
 		if (luaModchartExists && currentOptions.loadModcharts)
 		{
-			lua = new LuaVM();
+			lua = new ModchartLuaVM();
 			lua.setGlobalVar("curBeat", 0);
 			lua.setGlobalVar("curStep", 0);
 			lua.setGlobalVar("songPosition", Conductor.songPosition);
@@ -2206,7 +2205,7 @@ class PlayState extends MusicBeatState
 						}
 					}
 
-					babyArrow.frames = FlxAtlasFrames.fromSparrow(Paths.getbmp(SONG.strumskin), Paths.readText(path)); // Paths.getSparrowAtlas('NOTE_assets');
+					babyArrow.frames = Paths.getSparrowFrames(Paths.getbmp(SONG.strumskin), Paths.readText(path)); // Paths.getSparrowAtlas('NOTE_assets');
 
 					babyArrow.antialiasing = true;
 					babyArrow.setGraphicSize(Std.int(babyArrow.width * SONG.notescale));
@@ -2581,7 +2580,7 @@ class PlayState extends MusicBeatState
 			health = 0;
 		}
 		previousHealth = health;
-		if (FlxG.keys.justPressed.ENTER && startedCountdown && canPause)
+		if (FlxG.keys.justPressed.ENTER && startedCountdown && canPause && !inCutscene)
 		{
 			persistentUpdate = false;
 			persistentDraw = true;
@@ -4840,6 +4839,37 @@ class PlayState extends MusicBeatState
 			return;
 		}
 		Reflect.setProperty(leArray, variable, value);
+	}
+
+	override public function destroy():Void
+	{
+		// These objects are not owned by the state's renderedNotes group.
+		for (note in unspawnNotes)
+			note.destroy();
+		unspawnNotes = [];
+		if (vocals != null)
+		{
+			FlxG.sound.list.remove(vocals);
+			vocals.destroy();
+			vocals = null;
+		}
+		if (lua != null)
+		{
+			lua.destroy();
+			lua = null;
+		}
+		super.destroy();
+		Cache.Clear();
+		Paths.releaseUnusedGraphics(Character.charsBitmaps);
+		Paths.releaseUnusedGraphics(Note.noteBitmaps);
+		#if android
+		Paths.releaseUnusedGraphics(Paths.imgCache);
+		#end
+		daInst = null;
+		if (currentPState == this)
+			currentPState = null;
+		if (instance == this)
+			instance = null;
 	}
 
 	var curLight:Int = 0;

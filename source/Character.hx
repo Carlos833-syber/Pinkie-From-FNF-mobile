@@ -50,7 +50,7 @@ class Character extends FlxSprite
 
 				if (PlayState.isPony)
 				{
-					var tex = FlxAtlasFrames.fromSparrow('mods/introMod/_append/data/gfpone.png', 'mods/introMod/_append/data/gfpone.xml');
+					var tex = Paths.getSparrowFrames('mods/introMod/_append/data/gfpone.png', 'mods/introMod/_append/data/gfpone.xml');
 					frames = tex;
 
 					animation.addByIndices('sad', 'gf sad', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], "", 24, false);
@@ -256,7 +256,7 @@ class Character extends FlxSprite
 			case 'bf':
 				if (PlayState.isPony)
 				{
-					var tex = FlxAtlasFrames.fromSparrow('mods/introMod/_append/data/bfpone.png', 'mods/introMod/_append/data/bfpone.xml');
+					var tex = Paths.getSparrowFrames('mods/introMod/_append/data/bfpone.png', 'mods/introMod/_append/data/bfpone.xml');
 					frames = tex;
 					animation.addByPrefix('idle', 'BF idle', 24, false);
 					animation.addByPrefix('singUP', 'BF up', 24, false);
@@ -612,12 +612,10 @@ class Character extends FlxSprite
 						}
 
 						trace(curCharacter + ":" + path);
-						frames = FlxAtlasFrames.fromSparrow(getbmp(curCharacter), Paths.readText(path));
+						frames = Paths.getSparrowFrames(getbmp(curCharacter), Paths.readText(path));
 						Cache.charFrames[curCharacter] = frames;
 					}
 				}
-
-				FlxG.bitmap.dumpCache();
 
 				loadAnimations();
 				loadOffsets();
@@ -706,6 +704,7 @@ class Character extends FlxSprite
 			var gra:FlxGraphic;
 			var bmp = Paths.readBitmap(path);
 			gra = FlxGraphic.fromBitmapData(bmp, false, char);
+			Paths.trackGraphicAsset(gra, path);
 			gra.persist = true;
 			charsBitmaps.set(char, gra);
 		}

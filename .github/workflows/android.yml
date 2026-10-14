@@ -1,0 +1,71 @@
+name: Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'source/**'
+      - 'assets/**'
+      - 'example_mods/**'
+      - 'Project.xml'
+      - 'scripts/**'
+      - '.github/workflows/android.yml'
+  pull_request:
+    paths:
+      - 'source/**'
+      - 'assets/**'
+      - 'example_mods/**'
+      - 'Project.xml'
+      - 'scripts/**'
+      - '.github/workflows/android.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Haxe and Neko
+        uses: krdlab/setup-haxe@v1
+        with:
+          haxe-version: '4.2.5'
+      - name: Initialize isolated Haxe libraries
+        run: |
+          haxe --version
+          neko -version
+          haxelib setup "$RUNNER_TEMP/pinkie-haxelib"
+      - name: Java for Android SDK tools
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - name: Install pinned Android SDK and NDK
+        run: sdkmanager 'platforms;android-33' 'build-tools;33.0.2' 'ndk;25.2.9519653'
+      - name: Java for the Lime Android build
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '11'
+      - name: Install Haxe libraries and build ARM64 LuaJIT
+        env:
+          ANDROID_NDK_ROOT: ${{ env.ANDROID_SDK_ROOT }}/ndk/25.2.9519653
+        run: bash scripts/setup-android.sh
+      - name: Build ARM64 debug APK
+        env:
+          ANDROID_NDK_ROOT: ${{ env.ANDROID_SDK_ROOT }}/ndk/25.2.9519653
+        run: haxelib run lime build android -debug -arm64
+      - name: Upload installable APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Pinkie-Android-arm64-debug
+          path: export/debug/android/bin/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+          retention-days: 14

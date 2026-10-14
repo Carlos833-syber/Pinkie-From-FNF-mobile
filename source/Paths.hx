@@ -10,7 +10,6 @@ import openfl.media.Sound;
 import openfl.utils.Assets as OpenFlAssets;
 import sys.FileSystem;
 import sys.io.File;
-
 #if cpp
 import cpp.vm.Gc;
 #elseif hl
@@ -22,12 +21,53 @@ import neko.vm.Gc;
 #end
 
 using StringTools;
+
 class Paths
 {
 	inline public static var SOUND_EXT = #if web "mp3" #else "ogg" #end;
 
+	/** Resolve packaged assets without assuming the APK has a working directory. */
+	public static function assetId(path:String):String
+	{
+		if (path.indexOf(":") != -1 || !StringTools.startsWith(path, "assets/"))
+			return path;
+		var library = path.split("/")[1];
+		return switch (library)
+		{
+			case "shared", "songs", "tutorial", "week1": library + ":" + path;
+			default: path;
+		};
+	}
+
+	public static function exists(path:String):Bool
+	{
+		return FileSystem.exists(path) || OpenFlAssets.exists(assetId(path));
+	}
+
+	public static function readText(path:String):String
+	{
+		if (FileSystem.exists(path))
+			return File.getContent(path);
+		return OpenFlAssets.getText(assetId(path));
+	}
+
+	public static function readBitmap(path:String):BitmapData
+	{
+		if (FileSystem.exists(path))
+			return BitmapData.fromFile(path);
+		return OpenFlAssets.getBitmapData(assetId(path));
+	}
+
+	public static function readSound(path:String):Sound
+	{
+		if (FileSystem.exists(path))
+			return Sound.fromFile(path);
+		return OpenFlAssets.getSound(assetId(path));
+	}
+
 	static var currentLevel:String;
-	public static var imgCache:Map<String,FlxGraphic> = new Map<String,FlxGraphic>();
+	public static var imgCache:Map<String, FlxGraphic> = new Map<String, FlxGraphic>();
+
 	static public function setCurrentLevel(name:String)
 	{
 		currentLevel = name.toLowerCase();
@@ -38,11 +78,11 @@ class Paths
 		if (TitleState.curDir != "assets")
 		{
 			var path = TitleState.curDir + "/" + file;
-			
-			if(FileSystem.exists(path)){
+
+			if (FileSystem.exists(path))
+			{
 				return path;
 			}
-			
 		}
 		if (library != null)
 			return getLibraryPath(file, library);
@@ -57,10 +97,10 @@ class Paths
 			if (OpenFlAssets.exists(levelPath, type))
 				return levelPath;
 		}
-		
 
 		return getPreloadPath(file);
 	}
+
 	static public function getLibraryPath(file:String, library = "preload")
 	{
 		return if (library == "preload" || library == "default") getPreloadPath(file); else getLibraryPathForce(file, library);
@@ -78,7 +118,6 @@ class Paths
 
 	inline static public function file(file:String, type:AssetType = TEXT, ?library:String)
 	{
-		
 		return getPath(file, type, library);
 	}
 
@@ -99,24 +138,22 @@ class Paths
 
 	inline static public function json(key:String, ?library:String)
 	{
-		
 		return getPath('data/$key.json', TEXT, library);
 	}
 
 	inline static public function spritejson(key:String, ?library:String)
 	{
-		
 		return getPath('images/$key.json', TEXT, library);
 	}
 
 	static public function sound(key:String, ?library:String):Any
 	{
-		var file:Sound = returnSongFile(TitleState.curDir+"/sounds/"+key+'.ogg');
-		if(file != null) {
+		var file:Sound = returnSongFile(TitleState.curDir + "/sounds/" + key + '.ogg');
+		if (file != null)
+		{
 			return file;
 		}
-		
-		
+
 		return getPath('sounds/$key.$SOUND_EXT', SOUND, library);
 	}
 
@@ -127,71 +164,78 @@ class Paths
 
 	inline static public function music(key:String, ?library:String):Any
 	{
-		var file:Sound = returnSongFile(TitleState.curDir+"/music/"+key+'.ogg');
-		if(file != null) {
+		var file:Sound = returnSongFile(TitleState.curDir + "/music/" + key + '.ogg');
+		if (file != null)
+		{
 			return file;
 		}
-		
+
 		return getPath('music/$key.$SOUND_EXT', MUSIC, library);
 	}
 
 	inline static public function voices(song:String):Any
 	{
-		var file:Sound = returnSongFile(TitleState.curDir+"/songs/"+(song.toLowerCase().replace(' ', '-') + '/Voices.ogg'));
-		if(file != null) {
+		var file:Sound = returnSongFile(TitleState.curDir + "/songs/" + (song.toLowerCase().replace(' ', '-') + '/Voices.ogg'));
+		if (file != null)
+		{
 			return file;
 		}
-		
+
 		return 'songs:assets/songs/${song.toLowerCase()}/Voices.$SOUND_EXT';
 	}
 
 	inline static public function inst(song:String):Any
 	{
-		//if (TitleState.curDir != "assets") return Sound.fromFile(TitleState.curDir + "/songs/${song.toLowerCase()}/Inst.$SOUND_EXT");
-		
-		
-		var file:Sound = returnSongFile(TitleState.curDir+"/songs/"+(song.toLowerCase().replace(' ', '-') + '/Inst.ogg'));
-		if(file != null) {
+		// if (TitleState.curDir != "assets") return Sound.fromFile(TitleState.curDir + "/songs/${song.toLowerCase()}/Inst.$SOUND_EXT");
+
+		var file:Sound = returnSongFile(TitleState.curDir + "/songs/" + (song.toLowerCase().replace(' ', '-') + '/Inst.ogg'));
+		if (file != null)
+		{
 			return file;
 		}
-		
+
 		return 'songs:assets/songs/${song.toLowerCase()}/Inst.$SOUND_EXT';
 	}
+
 	inline static private function returnSongFile(file:String):Sound
 	{
 		var DASHIT = null;
-		if(TitleState.curDir != "assets"){
-			if(FileSystem.exists(file)) {
+		if (TitleState.curDir != "assets")
+		{
+			if (FileSystem.exists(file))
+			{
 				DASHIT = Sound.fromFile(file);
 			}
 		}
 		return DASHIT;
 	}
-	
-	inline static public function lua(script:String,?library:String){
-			return getPath('data/$script.lua',TEXT,library);
+
+	inline static public function lua(script:String, ?library:String)
+	{
+		return getPath('data/$script.lua', TEXT, library);
 	}
 
-	inline static public function modchart(song:String,?library:String){
-		return getPath('data/$song/modchart.lua',TEXT,library);
+	inline static public function modchart(song:String, ?library:String)
+	{
+		return getPath('data/$song/modchart.lua', TEXT, library);
 	}
 
 	inline static public function image(key:String, ?library:String):Any
 	{
-		
-		var file:BitmapData=null;
-		
-		if (TitleState.curDir != 'assets'){
+		var file:BitmapData = null;
+
+		if (TitleState.curDir != 'assets')
+		{
 			file = BitmapData.fromFile(TitleState.curDir + "/images/" + key + ".png");
 		}
-		
-		//trace(TitleState.curDir + "/images/" + key, FileSystem.exists(TitleState.curDir + "/images/" + key+".png"));
-		if(file != null) {
+
+		// trace(TitleState.curDir + "/images/" + key, FileSystem.exists(TitleState.curDir + "/images/" + key+".png"));
+		if (file != null)
+		{
 			return file;
 		}
-		
-		
-		//trace(key);
+
+		// trace(key);
 		return getPath('images/$key.png', IMAGE, library);
 	}
 
@@ -199,94 +243,45 @@ class Paths
 	{
 		return 'assets/fonts/$key';
 	}
-	
-	
-	
-	static public function getbmp(key:String,includePath:Bool=true):FlxGraphic{
-		
-		if (!imgCache.exists(key)){
-			
-			var path = "";
-			var pulllfromAssets:Bool = false;
-			var balls:Array<String> = [TitleState.curDir, "assets"];
-			var foundshit = false;
-			for (i in balls){
-				if (!foundshit){
-					var tits = "";
-					if(includePath)tits= i.replace('shared:','')  + "/shared/images/";
-						//trace(tits + key + ".png");
-					if (FileSystem.exists(tits + key + ".png")){
-						if(i == "assets")pulllfromAssets = true;
-						foundshit = true;
-						path = tits + key + ".png";
-						trace(path);
-					}
-				}
+
+	static public function getbmp(key:String, includePath:Bool = true):FlxGraphic
+	{
+		if (!imgCache.exists(key))
+		{
+			var path = key + ".png";
+			if (includePath)
+			{
+				path = TitleState.curDir + "/shared/images/" + key + ".png";
+				if (!exists(path))
+					path = "assets/shared/images/" + key + ".png";
 			}
-			var gra:FlxGraphic;
-			var bmp:BitmapData;
-			
-						//YOU ARE CACHING TO GPU
-			if (pulllfromAssets){
-				bmp = OpenFlAssets.getBitmapData("shared:" + path,false);
-			}else{
-				bmp = BitmapData.fromFile(path);
-			}
-			gra = FlxGraphic.fromBitmapData(bmp, false, key,false);
-			gra.persist = true;
-			imgCache.set(key, gra);
+			var graphic = FlxGraphic.fromBitmapData(readBitmap(path), false, key, false);
+			graphic.persist = true;
+			imgCache.set(key, graphic);
 		}
 		return imgCache.get(key);
 	}
-	
 
-	
-	public static function compress() {
+	public static function compress()
+	{
 		#if cpp
 		Gc.compact();
 		Gc.run(true);
-		//Gc.setMinimumWorkingMemory(totalMemory);
+		// Gc.setMinimumWorkingMemory(totalMemory);
 		#elseif hl
 		Gc.major();
 		#elseif (java || neko)
 		Gc.run(true);
 		#end
 	}
-	
 
-
-	static public function getTextFile(key:String,preload:Bool = false):String{
-		
-			
-			var path = "";
-			var pulllfromAssets:Bool = false;
-			var balls:Array<String> = [TitleState.curDir, "assets"];
-			var foundshit = false;
-			for (i in balls){
-				if (!foundshit){
-					if (FileSystem.exists(key)){
-						if(i == "assets")pulllfromAssets = true;
-						foundshit = true;
-						path = key;
-						trace(path);
-					}
-				}
-			}
-			
-						trace(TitleState.curDir);
-						trace(pulllfromAssets);
-						var txt:String = '';
-			if (pulllfromAssets){
-				var pl = preload?"":"shared:";
-				txt = OpenFlAssets.getText(pl+path);
-			}else{
-				txt = File.getContent(path);
-			}
-		return txt;
+	static public function getTextFile(key:String, preload:Bool = false):String
+	{
+		return readText(key);
 	}
+
 	inline static public function getSparrowAtlas(key:String, ?library:String)
 	{
-		
 		return FlxAtlasFrames.fromSparrow(image(key, library), file('images/$key.xml', library));
 	}
 

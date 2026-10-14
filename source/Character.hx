@@ -10,6 +10,7 @@ import openfl.Assets;
 import sys.FileSystem;
 import sys.io.File;
 import animateatlas.AtlasFrameMaker;
+
 using StringTools;
 
 class Character extends FlxSprite
@@ -17,16 +18,20 @@ class Character extends FlxSprite
 	public var animOffsets:Map<String, Array<Dynamic>>;
 	public var unintAnims:Array<String> = [];
 	public var debugMode:Bool = false;
+
 	public static var instance:MusicBeatState;
+
 	public var isPlayer:Bool = false;
 	public var curCharacter:String = 'bf';
-	public var holding:Bool=false;
+	public var holding:Bool = false;
 	public var disabledDance:Bool = false;
 	public var curAnim:String = "";
 	public var holdTimer:Float = 0;
-	public var camOffset:Array<Int> = [0,0];
+	public var camOffset:Array<Int> = [0, 0];
 	public var danceSpeed:Int = 1;
-	public static var charsBitmaps:Map<String,FlxGraphic> = new Map<String,FlxGraphic>();
+
+	public static var charsBitmaps:Map<String, FlxGraphic> = new Map<String, FlxGraphic>();
+
 	public function new(x:Float, y:Float, ?character:String = "bf", ?isPlayer:Bool = false)
 	{
 		super(x, y);
@@ -42,53 +47,49 @@ class Character extends FlxSprite
 		{
 			case 'gf':
 				// GIRLFRIEND CODE
-				
-				
-				if (PlayState.isPony){
-				
+
+				if (PlayState.isPony)
+				{
 					var tex = FlxAtlasFrames.fromSparrow('mods/introMod/_append/data/gfpone.png', 'mods/introMod/_append/data/gfpone.xml');
 					frames = tex;
-					
-					
-					
-				animation.addByIndices('sad', 'gf sad', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], "", 24, false);
-				animation.addByIndices('danceLeft', 'GF Dancing Beat', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
-				animation.addByIndices('danceRight', 'GF Dancing Beat', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
-				
-					
-					
-					var offsets:Array<String>;
-			var data = File.getContent("mods/introMod/_append/data/gfPonyOffsets.txt");
-			
-			
-			offsets = CoolUtil.coolTextFile2(data);
-			Cache.offsetData[curCharacter] = data;
-		for(s in offsets){
-			var stuff:Array<String> = s.split(" ");
-			addOffset(stuff[0],Std.parseFloat(stuff[1]),Std.parseFloat(stuff[2]));
-		}
-				
-				}else{
-				tex = Paths.getSparrowAtlas('characters/GF_assets','shared');
-				frames = tex;
-				animation.addByPrefix('cheer', 'GF Cheer', 24, false);
-				animation.addByPrefix('singLEFT', 'GF left note', 24, false);
-				animation.addByPrefix('singRIGHT', 'GF Right Note', 24, false);
-				animation.addByPrefix('singUP', 'GF Up Note', 24, false);
-				animation.addByPrefix('singDOWN', 'GF Down Note', 24, false);
-				animation.addByIndices('sad', 'gf sad', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], "", 24, false);
-				animation.addByIndices('danceLeft', 'GF Dancing Beat', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
-				animation.addByIndices('danceRight', 'GF Dancing Beat', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
-				animation.addByIndices('hairBlow', "GF Dancing Beat Hair blowing", [0, 1, 2, 3], "", 24);
-				animation.addByIndices('hairFall', "GF Dancing Beat Hair Landing", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], "", 24, false);
-				animation.addByPrefix('scared', 'GF FEAR', 24);
 
-				loadOffsets();
-		}
+					animation.addByIndices('sad', 'gf sad', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], "", 24, false);
+					animation.addByIndices('danceLeft', 'GF Dancing Beat', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
+					animation.addByIndices('danceRight', 'GF Dancing Beat', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
+
+					var offsets:Array<String>;
+					var data = Paths.readText("mods/introMod/_append/data/gfPonyOffsets.txt");
+
+					offsets = CoolUtil.coolTextFile2(data);
+					Cache.offsetData[curCharacter] = data;
+					for (s in offsets)
+					{
+						var stuff:Array<String> = s.split(" ");
+						addOffset(stuff[0], Std.parseFloat(stuff[1]), Std.parseFloat(stuff[2]));
+					}
+				}
+				else
+				{
+					tex = Paths.getSparrowAtlas('characters/GF_assets', 'shared');
+					frames = tex;
+					animation.addByPrefix('cheer', 'GF Cheer', 24, false);
+					animation.addByPrefix('singLEFT', 'GF left note', 24, false);
+					animation.addByPrefix('singRIGHT', 'GF Right Note', 24, false);
+					animation.addByPrefix('singUP', 'GF Up Note', 24, false);
+					animation.addByPrefix('singDOWN', 'GF Down Note', 24, false);
+					animation.addByIndices('sad', 'gf sad', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], "", 24, false);
+					animation.addByIndices('danceLeft', 'GF Dancing Beat', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
+					animation.addByIndices('danceRight', 'GF Dancing Beat', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
+					animation.addByIndices('hairBlow', "GF Dancing Beat Hair blowing", [0, 1, 2, 3], "", 24);
+					animation.addByIndices('hairFall', "GF Dancing Beat Hair Landing", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], "", 24, false);
+					animation.addByPrefix('scared', 'GF FEAR', 24);
+
+					loadOffsets();
+				}
 				playAnim('danceRight');
 			case 'lizzy':
 				// GIRLFRIEND CODE
-				tex = Paths.getSparrowAtlas('characters/cutie','shared');
+				tex = Paths.getSparrowAtlas('characters/cutie', 'shared');
 				frames = tex;
 				animation.addByPrefix('cheer', 'GF Cheer', 24, false);
 				animation.addByPrefix('singLEFT', 'GF left note', 24, false);
@@ -104,7 +105,7 @@ class Character extends FlxSprite
 				loadOffsets();
 				playAnim('danceRight');
 			case 'gf-christmas':
-				tex = Paths.getSparrowAtlas('characters/gfChristmas','shared');
+				tex = Paths.getSparrowAtlas('characters/gfChristmas', 'shared');
 				frames = tex;
 				animation.addByPrefix('cheer', 'GF Cheer', 24, false);
 				animation.addByPrefix('singLEFT', 'GF left note', 24, false);
@@ -122,7 +123,7 @@ class Character extends FlxSprite
 				playAnim('danceRight');
 
 			case 'gf-car':
-				tex = Paths.getSparrowAtlas('characters/gfCar','shared');
+				tex = Paths.getSparrowAtlas('characters/gfCar', 'shared');
 				frames = tex;
 				animation.addByIndices('singUP', 'GF Dancing Beat Hair blowing CAR', [0], "", 24, false);
 				animation.addByIndices('danceLeft', 'GF Dancing Beat Hair blowing CAR', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
@@ -133,7 +134,7 @@ class Character extends FlxSprite
 				playAnim('danceRight');
 
 			case 'gf-pixel':
-				tex = Paths.getSparrowAtlas('characters/gfPixel','shared');
+				tex = Paths.getSparrowAtlas('characters/gfPixel', 'shared');
 				frames = tex;
 				animation.addByIndices('singUP', 'GF IDLE', [2], "", 24, false);
 				animation.addByIndices('danceLeft', 'GF IDLE', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
@@ -148,7 +149,7 @@ class Character extends FlxSprite
 
 			case 'dad':
 				// DAD ANIMATION LOADING CODE
-				tex = Paths.getSparrowAtlas('characters/DADDY_DEAREST','shared');
+				tex = Paths.getSparrowAtlas('characters/DADDY_DEAREST', 'shared');
 				frames = tex;
 
 				loadAnimations();
@@ -157,7 +158,7 @@ class Character extends FlxSprite
 
 				playAnim('idle');
 			case 'spooky':
-				tex = Paths.getSparrowAtlas('characters/spooky_kids_assets','shared');
+				tex = Paths.getSparrowAtlas('characters/spooky_kids_assets', 'shared');
 				frames = tex;
 				animation.addByPrefix('singUP', 'spooky UP NOTE', 24, false);
 				animation.addByPrefix('singDOWN', 'spooky DOWN note', 24, false);
@@ -170,7 +171,7 @@ class Character extends FlxSprite
 
 				playAnim('danceRight');
 			case 'mom':
-				tex = Paths.getSparrowAtlas('characters/Mom_Assets','shared');
+				tex = Paths.getSparrowAtlas('characters/Mom_Assets', 'shared');
 				frames = tex;
 
 				animation.addByPrefix('idle', "Mom Idle", 24, false);
@@ -186,7 +187,7 @@ class Character extends FlxSprite
 				playAnim('idle');
 
 			case 'mom-car':
-				tex = Paths.getSparrowAtlas('characters/momCar','shared');
+				tex = Paths.getSparrowAtlas('characters/momCar', 'shared');
 				frames = tex;
 
 				animation.addByPrefix('idle', "Mom Idle", 24, false);
@@ -201,7 +202,7 @@ class Character extends FlxSprite
 
 				playAnim('idle');
 			case 'monster':
-				tex = Paths.getSparrowAtlas('characters/Monster_Assets','shared');
+				tex = Paths.getSparrowAtlas('characters/Monster_Assets', 'shared');
 				frames = tex;
 				animation.addByPrefix('idle', 'monster idle', 24, false);
 				animation.addByPrefix('singUP', 'monster up note', 24, false);
@@ -212,7 +213,7 @@ class Character extends FlxSprite
 				loadOffsets();
 				playAnim('idle');
 			case 'monster-christmas':
-				tex = Paths.getSparrowAtlas('characters/monsterChristmas','shared');
+				tex = Paths.getSparrowAtlas('characters/monsterChristmas', 'shared');
 				frames = tex;
 				animation.addByPrefix('idle', 'monster idle', 24, false);
 				animation.addByPrefix('singUP', 'monster up note', 24, false);
@@ -223,7 +224,7 @@ class Character extends FlxSprite
 
 				playAnim('idle');
 			case 'pico':
-				tex = Paths.getSparrowAtlas('characters/Pico_FNF_assetss','shared');
+				tex = Paths.getSparrowAtlas('characters/Pico_FNF_assetss', 'shared');
 				frames = tex;
 				animation.addByPrefix('idle', "Pico Idle Dance", 24, false);
 				animation.addByPrefix('singUP', 'pico Up note0', 24, false);
@@ -253,7 +254,8 @@ class Character extends FlxSprite
 				flipX = true;
 
 			case 'bf':
-				if (PlayState.isPony){
+				if (PlayState.isPony)
+				{
 					var tex = FlxAtlasFrames.fromSparrow('mods/introMod/_append/data/bfpone.png', 'mods/introMod/_append/data/bfpone.xml');
 					frames = tex;
 					animation.addByPrefix('idle', 'BF idle', 24, false);
@@ -271,22 +273,21 @@ class Character extends FlxSprite
 					animation.addByPrefix('deathConfirm', "BF deathend", 24, false);
 
 					animation.addByPrefix('scared', 'BF idle shaking', 24);
-					
-					
+
 					var offsets:Array<String>;
-			var data = File.getContent("mods/introMod/_append/data/bfPonyOffsets.txt");
-			
-			
-			offsets = CoolUtil.coolTextFile2(data);
-			Cache.offsetData[curCharacter] = data;
-		for(s in offsets){
-			var stuff:Array<String> = s.split(" ");
-			addOffset(stuff[0],Std.parseFloat(stuff[1]),Std.parseFloat(stuff[2]));
-		}
-					
-					
-				}else{
-					var tex = Paths.getSparrowAtlas('characters/BOYFRIEND','shared');
+					var data = Paths.readText("mods/introMod/_append/data/bfPonyOffsets.txt");
+
+					offsets = CoolUtil.coolTextFile2(data);
+					Cache.offsetData[curCharacter] = data;
+					for (s in offsets)
+					{
+						var stuff:Array<String> = s.split(" ");
+						addOffset(stuff[0], Std.parseFloat(stuff[1]), Std.parseFloat(stuff[2]));
+					}
+				}
+				else
+				{
+					var tex = Paths.getSparrowAtlas('characters/BOYFRIEND', 'shared');
 					frames = tex;
 					animation.addByPrefix('idle', 'BF idle dance', 24, false);
 					animation.addByPrefix('singUP', 'BF NOTE UP0', 24, false);
@@ -311,33 +312,33 @@ class Character extends FlxSprite
 
 				flipX = true;
 
-				case 'bf-neb':
-					var tex = Paths.getSparrowAtlas('characters/nebBF','shared');
-					frames = tex;
-					animation.addByPrefix('idle', 'BF idle dance', 24, false);
-					animation.addByPrefix('singUP', 'BF NOTE UP0', 24, false);
-					animation.addByPrefix('singLEFT', 'BF NOTE LEFT0', 24, false);
-					animation.addByPrefix('singRIGHT', 'BF NOTE RIGHT0', 24, false);
-					animation.addByPrefix('singDOWN', 'BF NOTE DOWN0', 24, false);
-					animation.addByPrefix('singUPmiss', 'BF NOTE UP MISS', 24, false);
-					animation.addByPrefix('singLEFTmiss', 'BF NOTE LEFT MISS', 24, false);
-					animation.addByPrefix('singRIGHTmiss', 'BF NOTE RIGHT MISS', 24, false);
-					animation.addByPrefix('singDOWNmiss', 'BF NOTE DOWN MISS', 24, false);
-					animation.addByPrefix('hey', 'BF HEY', 24, false);
+			case 'bf-neb':
+				var tex = Paths.getSparrowAtlas('characters/nebBF', 'shared');
+				frames = tex;
+				animation.addByPrefix('idle', 'BF idle dance', 24, false);
+				animation.addByPrefix('singUP', 'BF NOTE UP0', 24, false);
+				animation.addByPrefix('singLEFT', 'BF NOTE LEFT0', 24, false);
+				animation.addByPrefix('singRIGHT', 'BF NOTE RIGHT0', 24, false);
+				animation.addByPrefix('singDOWN', 'BF NOTE DOWN0', 24, false);
+				animation.addByPrefix('singUPmiss', 'BF NOTE UP MISS', 24, false);
+				animation.addByPrefix('singLEFTmiss', 'BF NOTE LEFT MISS', 24, false);
+				animation.addByPrefix('singRIGHTmiss', 'BF NOTE RIGHT MISS', 24, false);
+				animation.addByPrefix('singDOWNmiss', 'BF NOTE DOWN MISS', 24, false);
+				animation.addByPrefix('hey', 'BF HEY', 24, false);
 
-					animation.addByPrefix('firstDeath', "BF dies", 24, false);
-					animation.addByPrefix('deathLoop', "BF Dead Loop", 24, true);
-					animation.addByPrefix('deathConfirm', "BF Dead confirm", 24, false);
+				animation.addByPrefix('firstDeath', "BF dies", 24, false);
+				animation.addByPrefix('deathLoop', "BF Dead Loop", 24, true);
+				animation.addByPrefix('deathConfirm', "BF Dead confirm", 24, false);
 
-					animation.addByPrefix('scared', 'BF idle shaking', 24);
+				animation.addByPrefix('scared', 'BF idle shaking', 24);
 
-					loadOffsets();
-					playAnim('idle');
+				loadOffsets();
+				playAnim('idle');
 
-					flipX = true;
+				flipX = true;
 
 			case 'bf-christmas':
-				var tex = Paths.getSparrowAtlas('characters/bfChristmas','shared');
+				var tex = Paths.getSparrowAtlas('characters/bfChristmas', 'shared');
 				frames = tex;
 				animation.addByPrefix('idle', 'BF idle dance', 24, false);
 				animation.addByPrefix('singUP', 'BF NOTE UP0', 24, false);
@@ -355,7 +356,7 @@ class Character extends FlxSprite
 
 				flipX = true;
 			case 'bf-car':
-				var tex = Paths.getSparrowAtlas('characters/bfCar','shared');
+				var tex = Paths.getSparrowAtlas('characters/bfCar', 'shared');
 				frames = tex;
 				animation.addByPrefix('idle', 'BF idle dance', 24, false);
 				animation.addByPrefix('singUP', 'BF NOTE UP0', 24, false);
@@ -372,7 +373,7 @@ class Character extends FlxSprite
 
 				flipX = true;
 			case 'bf-pixel':
-				frames = Paths.getSparrowAtlas('characters/bfPixel','shared');
+				frames = Paths.getSparrowAtlas('characters/bfPixel', 'shared');
 				animation.addByPrefix('idle', 'BF IDLE', 24, false);
 				animation.addByPrefix('singUP', 'BF UP NOTE', 24, false);
 				animation.addByPrefix('singLEFT', 'BF LEFT NOTE', 24, false);
@@ -395,7 +396,7 @@ class Character extends FlxSprite
 
 				flipX = true;
 			case 'bf-pixel-dead':
-				frames = Paths.getSparrowAtlas('characters/bfPixelsDEAD','shared');
+				frames = Paths.getSparrowAtlas('characters/bfPixelsDEAD', 'shared');
 				animation.addByPrefix('singUP', "BF Dies pixel", 24, false);
 				animation.addByPrefix('firstDeath', "BF Dies pixel", 24, false);
 				animation.addByPrefix('deathLoop', "Retry Loop", 24, true);
@@ -411,7 +412,7 @@ class Character extends FlxSprite
 				flipX = true;
 
 			case 'senpai':
-				frames = Paths.getSparrowAtlas('characters/senpai','shared');
+				frames = Paths.getSparrowAtlas('characters/senpai', 'shared');
 				animation.addByPrefix('idle', 'Senpai Idle', 24, false);
 				animation.addByPrefix('singUP', 'SENPAI UP NOTE', 24, false);
 				animation.addByPrefix('singLEFT', 'SENPAI LEFT NOTE', 24, false);
@@ -426,7 +427,7 @@ class Character extends FlxSprite
 
 				antialiasing = false;
 			case 'senpai-angry':
-				frames = Paths.getSparrowAtlas('characters/senpai','shared');
+				frames = Paths.getSparrowAtlas('characters/senpai', 'shared');
 				animation.addByPrefix('idle', 'Angry Senpai Idle', 24, false);
 				animation.addByPrefix('singUP', 'Angry Senpai UP NOTE', 24, false);
 				animation.addByPrefix('singLEFT', 'Angry Senpai LEFT NOTE', 24, false);
@@ -442,7 +443,7 @@ class Character extends FlxSprite
 				antialiasing = false;
 
 			case 'spirit':
-				frames = Paths.getPackerAtlas('characters/spirit','shared');
+				frames = Paths.getPackerAtlas('characters/spirit', 'shared');
 				animation.addByPrefix('idle', "idle spirit_", 24, false);
 				animation.addByPrefix('singUP', "up_", 24, false);
 				animation.addByPrefix('singRIGHT', "right_", 24, false);
@@ -456,7 +457,7 @@ class Character extends FlxSprite
 				playAnim('idle');
 
 				antialiasing = false;
-				
+
 			case 'parents-christmas':
 				frames = Paths.getSparrowAtlas('characters/mom_dad_christmas_assets');
 				animation.addByPrefix('idle', 'Parent Christmas Idle', 24, false);
@@ -474,10 +475,8 @@ class Character extends FlxSprite
 				loadOffsets();
 
 				playAnim('idle');
-				
-				
+
 			case 'discord-atlas':
-				
 				frames = AtlasFrameMaker.construct('assets/shared/images/characters/discord_assets');
 				animation.addByPrefix('idle', "idle", 24, false);
 				animation.addByPrefix('singLEFT', "left", 24, false);
@@ -485,152 +484,149 @@ class Character extends FlxSprite
 				animation.addByPrefix('singRIGHT', "right", 24, false);
 				animation.addByPrefix('singDOWN', "down", 24, false);
 				animation.addByPrefix('hey', "hey", 24, false);
-				//loadOffsets();
+				// loadOffsets();
 				unintAnims = ["hey"];
 				playAnim('idle');
 
 				antialiasing = true;
 
 				antialiasing = true;
-/*
-			case 'discord_die':
-				
-				frames = Paths.getSparrowAtlas('characters/DISCORDSPRITES/die');
-				animation.addByPrefix('die', "discord_die", 24, false);
+			/*
+				case 'discord_die':
 
-				//loadOffsets();
-				unintAnims = ['stop','poo'];
-				playAnim('stop');
+					frames = Paths.getSparrowAtlas('characters/DISCORDSPRITES/die');
+					animation.addByPrefix('die', "discord_die", 24, false);
 
-				antialiasing = true;
+					//loadOffsets();
+					unintAnims = ['stop','poo'];
+					playAnim('stop');
 
-			case 'discord-atlas_newscene':
-				
-				frames = AtlasFrameMaker.construct('assets/shared/images/characters/discord_newscene');
-				animation.addByPrefix('idle', "idle", 24, false);
-				animation.addByPrefix('new_scene', "new_scene", 24, false);
+					antialiasing = true;
 
-				//loadOffsets();
-				unintAnims = ["new_scene"];
-				playAnim('new_scene');
+				case 'discord-atlas_newscene':
 
-				antialiasing = true;
+					frames = AtlasFrameMaker.construct('assets/shared/images/characters/discord_newscene');
+					animation.addByPrefix('idle', "idle", 24, false);
+					animation.addByPrefix('new_scene', "new_scene", 24, false);
 
-			case 'discord_atlas_gofast':
-				var anim = "gofast";
-				getDiscord(anim);
-			case 'discord_atlas_stutter':
-				var anim = "stutter";
-				getDiscord(anim);
-			case 'discord_atlas_hey':
-				var anim = "hey";
-				getDiscord(anim);*/
+					//loadOffsets();
+					unintAnims = ["new_scene"];
+					playAnim('new_scene');
+
+					antialiasing = true;
+
+				case 'discord_atlas_gofast':
+					var anim = "gofast";
+					getDiscord(anim);
+				case 'discord_atlas_stutter':
+					var anim = "stutter";
+					getDiscord(anim);
+				case 'discord_atlas_hey':
+					var anim = "hey";
+					getDiscord(anim); */
 			case 'doxxie':
-				
-				
-				
-			frames = AtlasFrameMaker.construct("assets/shared/images/characters/doxxie_assets");
-			
-			animation.add("idle", [0,1,2,3,4,5,6,7,8,9], 24, false);
-			animation.add("singLEFT", [12,13], 24, false);
-			animation.add("singRIGHT", [16,17], 24, false);
-			animation.add("singDOWN", numArr(20,22), 24, false);
-			animation.add("singUP", numArr(24, 26), 24, false);
-			
-			animation.add("singUP-alt", numArr(27,32), 24, false);
-			animation.add("singLEFT-alt", numArr(27,32), 24, false);
-			animation.add("singDOWN-alt",  numArr(33, 37), 24, false);
-			animation.add("singRIGHT-alt",  numArr(33, 37), 24, false);
-			
+				frames = AtlasFrameMaker.construct("assets/shared/images/characters/doxxie_assets");
+
+				animation.add("idle", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 24, false);
+				animation.add("singLEFT", [12, 13], 24, false);
+				animation.add("singRIGHT", [16, 17], 24, false);
+				animation.add("singDOWN", numArr(20, 22), 24, false);
+				animation.add("singUP", numArr(24, 26), 24, false);
+
+				animation.add("singUP-alt", numArr(27, 32), 24, false);
+				animation.add("singLEFT-alt", numArr(27, 32), 24, false);
+				animation.add("singDOWN-alt", numArr(33, 37), 24, false);
+				animation.add("singRIGHT-alt", numArr(33, 37), 24, false);
+
 				playAnim('idle');
-			
-		default:
-			var xmlData:String = '';
-			/*if(Cache.xmlData[curCharacter]!=null){
-				xmlData=Cache.xmlData[curCharacter];
-			}else{
-				xmlData=File.getContent("assets/shared/images/characters/"+curCharacter+".xml");
-				Cache.xmlData[curCharacter]=xmlData;
-			}
-			var bitmapData:BitmapData;
-			if(FlxG.bitmap.get(curCharacter + "CharFrames")!=null){
-				bitmapData = FlxG.bitmap.get(curCharacter + "CharFrames").bitmap;
-			}else{
-				bitmapData = BitmapData.fromFile("assets/shared/images/characters/"+curCharacter+".png");
-				FlxG.bitmap.add(bitmapData,true,curCharacter+"CharFrames");
-			}*/
 
-			if(Cache.charFrames[curCharacter]!=null){
-				frames=Cache.charFrames[curCharacter];
-			}else{
-				
-				var path = "";
-			
-			var piss:Array<String> = ["assets"];
-			var tits:String = piss.join(",") + "," + TitleState.directories.join(",");
-			var balls = tits.split(",");
-			
-			
-			
-			
-				if (StringTools.contains(character, 'atlas')){
-					for (i in balls){
-						var boobs = i + "/shared/images/characters/" + curCharacter + "/spritemap.png";
-						trace(boobs);
-						if (FileSystem.exists(boobs)){
-							path = boobs;
-							break;
-						}
-						boobs = "mods/" + i + "/shared/images/characters/" + curCharacter + "/spritemap.png";
-						if (FileSystem.exists(boobs)){
-							path = boobs;
-							break;
-						}
+			default:
+				var xmlData:String = '';
+				/*if(Cache.xmlData[curCharacter]!=null){
+						xmlData=Cache.xmlData[curCharacter];
+					}else{
+						xmlData=Paths.readText("assets/shared/images/characters/"+curCharacter+".xml");
+						Cache.xmlData[curCharacter]=xmlData;
 					}
-						
-					trace(curCharacter + ":" + path);
-						frames = AtlasFrameMaker.construct(StringTools.replace(path,'/spritemap.png',''));//FlxAtlasFrames.fromSparrow(getbmp(curCharacter),File.getContent(path));
-						Cache.charFrames[curCharacter]=frames;
+					var bitmapData:BitmapData;
+					if(FlxG.bitmap.get(curCharacter + "CharFrames")!=null){
+						bitmapData = FlxG.bitmap.get(curCharacter + "CharFrames").bitmap;
+					}else{
+						bitmapData = Paths.readBitmap("assets/shared/images/characters/"+curCharacter+".png");
+						FlxG.bitmap.add(bitmapData,true,curCharacter+"CharFrames");
+				}*/
 
-				}else{
-				
-			
-			
-					for (i in balls){
-						var boobs = i + "/shared/images/characters/" + curCharacter + ".xml";
-						trace(boobs);
-						if (FileSystem.exists(boobs)){
-							path = boobs;
-							break;
+				if (Cache.charFrames[curCharacter] != null)
+				{
+					frames = Cache.charFrames[curCharacter];
+				}
+				else
+				{
+					var path = "";
+
+					var piss:Array<String> = ["assets"];
+					var tits:String = piss.join(",") + "," + TitleState.directories.join(",");
+					var balls = tits.split(",");
+
+					if (StringTools.contains(character, 'atlas'))
+					{
+						for (i in balls)
+						{
+							var boobs = i + "/shared/images/characters/" + curCharacter + "/spritemap.png";
+							trace(boobs);
+							if (Paths.exists(boobs))
+							{
+								path = boobs;
+								break;
+							}
+							boobs = "mods/" + i + "/shared/images/characters/" + curCharacter + "/spritemap.png";
+							if (Paths.exists(boobs))
+							{
+								path = boobs;
+								break;
+							}
 						}
-						boobs = "mods/" + i + "/shared/images/characters/" + curCharacter + ".xml";
-						if (FileSystem.exists(boobs)){
-							path = boobs;
-							break;
+
+						trace(curCharacter + ":" + path);
+						frames = AtlasFrameMaker.construct(StringTools.replace(path, '/spritemap.png',
+							'')); // FlxAtlasFrames.fromSparrow(getbmp(curCharacter),Paths.readText(path));
+						Cache.charFrames[curCharacter] = frames;
+					}
+					else
+					{
+						for (i in balls)
+						{
+							var boobs = i + "/shared/images/characters/" + curCharacter + ".xml";
+							trace(boobs);
+							if (Paths.exists(boobs))
+							{
+								path = boobs;
+								break;
+							}
+							boobs = "mods/" + i + "/shared/images/characters/" + curCharacter + ".xml";
+							if (Paths.exists(boobs))
+							{
+								path = boobs;
+								break;
+							}
 						}
+
+						trace(curCharacter + ":" + path);
+						frames = FlxAtlasFrames.fromSparrow(getbmp(curCharacter), Paths.readText(path));
+						Cache.charFrames[curCharacter] = frames;
 					}
-						
-					trace(curCharacter + ":" + path);
-						frames = FlxAtlasFrames.fromSparrow(getbmp(curCharacter),File.getContent(path));
-						Cache.charFrames[curCharacter]=frames;
-					}
-			}
-			
-			FlxG.bitmap.dumpCache();
+				}
 
+				FlxG.bitmap.dumpCache();
 
+				loadAnimations();
+				loadOffsets();
 
-
-
-			loadAnimations();
-			loadOffsets();
-
-			if(animation.getByName("idle")!=null)
-				playAnim("idle");
-			else
-				playAnim("danceRight");
+				if (animation.getByName("idle") != null)
+					playAnim("idle");
+				else
+					playAnim("danceRight");
 		}
-
 
 		dance();
 
@@ -656,150 +652,188 @@ class Character extends FlxSprite
 			}
 		}
 	}
-	public function getDiscord(anim){//UNUSED DISCORD WAS GOING TO HAVE 12 ANIMS
-		
-				//frames = AtlasFrameMaker.construct('assets/shared/images/characters/discord_'+anim);
-				frames = Startup.atlasFrames.get('discord_'+anim);
-				animation.addByPrefix('idle', "idle", 24, false);
-				animation.addByPrefix(anim, anim, 24, false);
 
-				//loadOffsets();
-				unintAnims = [anim];
-				playAnim(anim);
-				antialiasing = true;
+	public function getDiscord(anim)
+	{ // UNUSED DISCORD WAS GOING TO HAVE 12 ANIMS
+
+		// frames = AtlasFrameMaker.construct('assets/shared/images/characters/discord_'+anim);
+		frames = Startup.atlasFrames.get('discord_' + anim);
+		animation.addByPrefix('idle', "idle", 24, false);
+		animation.addByPrefix(anim, anim, 24, false);
+
+		// loadOffsets();
+		unintAnims = [anim];
+		playAnim(anim);
+		antialiasing = true;
 	}
-	public static function numArr(min:Int, max:Int):Array<Int>{
+
+	public static function numArr(min:Int, max:Int):Array<Int>
+	{
 		var arr:Array<Int> = [];
 		var len = max - min;
-		for (i in 0...len){
+		for (i in 0...len)
+		{
 			arr.push(min + i);
 		}
-		
+
 		return arr;
 	}
-	
-	public function getbmp(char:String):FlxGraphic{
-		
+
+	public function getbmp(char:String):FlxGraphic
+	{
 		trace(charsBitmaps.get(char));
-		if (!charsBitmaps.exists(char)){
-			
+		if (!charsBitmaps.exists(char))
+		{
 			var path = "";
 			var piss:Array<String> = ["assets"];
 			var tits:String = piss.join(",") + "," + TitleState.directories.join(",");
 			var balls = tits.split(",");
-			for (i in balls){
-				
-				if (FileSystem.exists(i + "/shared/images/characters/" + curCharacter + ".png")){
+			for (i in balls)
+			{
+				if (Paths.exists(i + "/shared/images/characters/" + curCharacter + ".png"))
+				{
 					path = i + "/shared/images/characters/" + curCharacter + ".png";
 					break;
 				}
-				if (FileSystem.exists("mods/"+ i + "/shared/images/characters/" + curCharacter + ".png")){
+				if (Paths.exists("mods/" + i + "/shared/images/characters/" + curCharacter + ".png"))
+				{
 					path = "mods/" + i + "/shared/images/characters/" + curCharacter + ".png";
 					break;
 				}
 			}
 			trace(curCharacter + ":" + path);
-			
+
 			var gra:FlxGraphic;
-			var bmp = BitmapData.fromFile(path);
+			var bmp = Paths.readBitmap(path);
 			gra = FlxGraphic.fromBitmapData(bmp, false, char);
 			gra.persist = true;
 			charsBitmaps.set(char, gra);
 		}
-		
-		
+
 		return charsBitmaps.get(char);
 	}
-	public function loadOffsets(){
-		//var offsets = CoolUtil.coolTextFile(Paths.txtImages('characters/'+curCharacter+"Offsets"));
+
+	public function loadOffsets()
+	{
+		// var offsets = CoolUtil.coolTextFile(Paths.txtImages('characters/'+curCharacter+"Offsets"));
 		var offsets:Array<String>;
-		if(Cache.offsetData[curCharacter]!=null){
+		if (Cache.offsetData[curCharacter] != null)
+		{
 			offsets = CoolUtil.coolTextFile2(Cache.offsetData[curCharacter]);
-		}else{
+		}
+		else
+		{
 			var data;
-			
-			if (FileSystem.exists(TitleState.curDir + "/shared/images/characters/" + curCharacter + "Offsets.txt")){
-				data = File.getContent(TitleState.curDir + "/shared/images/characters/"+curCharacter+"Offsets.txt");
-			}else{
-				data = File.getContent("assets/shared/images/characters/"+curCharacter+"Offsets.txt");
+
+			if (Paths.exists(TitleState.curDir + "/shared/images/characters/" + curCharacter + "Offsets.txt"))
+			{
+				data = Paths.readText(TitleState.curDir + "/shared/images/characters/" + curCharacter + "Offsets.txt");
 			}
-			
-			
+			else
+			{
+				data = Paths.readText("assets/shared/images/characters/" + curCharacter + "Offsets.txt");
+			}
+
 			offsets = CoolUtil.coolTextFile2(data);
 			Cache.offsetData[curCharacter] = data;
 		}
-		for(s in offsets){
+		for (s in offsets)
+		{
 			var stuff:Array<String> = s.split(" ");
-			addOffset(stuff[0],Std.parseFloat(stuff[1]),Std.parseFloat(stuff[2]));
+			addOffset(stuff[0], Std.parseFloat(stuff[1]), Std.parseFloat(stuff[2]));
 		}
 	}
 
-	public function loadAnimations(){
+	public function loadAnimations()
+	{
 		trace("loading anims for " + curCharacter);
-		try {
-			//var anims = CoolUtil.coolTextFile(Paths.txtImages('characters/'+curCharacter+"Anims"));
+		try
+		{
+			// var anims = CoolUtil.coolTextFile(Paths.txtImages('characters/'+curCharacter+"Anims"));
 			var anims:Array<String>;
-			if(Cache.offsetData[curCharacter]!=null){
+			if (Cache.offsetData[curCharacter] != null)
+			{
 				anims = CoolUtil.coolTextFile2(Cache.animData[curCharacter]);
-			}else{
-				var data;
-				
-				
-			if (FileSystem.exists(TitleState.curDir + "/shared/images/characters/" + curCharacter + "Anims.txt")){
-				data = File.getContent(TitleState.curDir + "/shared/images/characters/"+curCharacter+"Anims.txt");
-			}else{
-				data = File.getContent("assets/shared/images/characters/"+curCharacter+"Anims.txt");
 			}
+			else
+			{
+				var data;
+
+				if (Paths.exists(TitleState.curDir + "/shared/images/characters/" + curCharacter + "Anims.txt"))
+				{
+					data = Paths.readText(TitleState.curDir + "/shared/images/characters/" + curCharacter + "Anims.txt");
+				}
+				else
+				{
+					data = Paths.readText("assets/shared/images/characters/" + curCharacter + "Anims.txt");
+				}
 				anims = CoolUtil.coolTextFile2(data);
 				Cache.animData[curCharacter] = data;
 			}
-			for(s in anims){
+			for (s in anims)
+			{
 				var stuff:Array<String> = s.split(" ");
-				var type = stuff.splice(0,1)[0];
-				var name = stuff.splice(0,1)[0];
-				var fps = Std.parseInt(stuff.splice(0,1)[0]);
-				trace(type,name,stuff.join(" "),fps);
-				if(type.toLowerCase()=='flipx'){
+				var type = stuff.splice(0, 1)[0];
+				var name = stuff.splice(0, 1)[0];
+				var fps = Std.parseInt(stuff.splice(0, 1)[0]);
+				trace(type, name, stuff.join(" "), fps);
+				if (type.toLowerCase() == 'flipx')
+				{
 					flipX = !flipX;
-				}else if(type.toLowerCase()=='pixel'){
+				}
+				else if (type.toLowerCase() == 'pixel')
+				{
 					antialiasing = false;
-				}else if (type.toLowerCase() == 'scale'){
+				}
+				else if (type.toLowerCase() == 'scale')
+				{
 					origin.set();
-					scale.set(Std.parseFloat(name),Std.parseFloat(name));
-				}else if(type.toLowerCase()=='camofs'){
+					scale.set(Std.parseFloat(name), Std.parseFloat(name));
+				}
+				else if (type.toLowerCase() == 'camofs')
+				{
 					var c = name.split(',');
 					camOffset[0] = Std.parseInt(c[0]);
 					camOffset[1] = Std.parseInt(c[1]);
-					//camOffset = c;
-				}else if(type.toLowerCase()=='prefix'){
+					// camOffset = c;
+				}
+				else if (type.toLowerCase() == 'prefix')
+				{
 					animation.addByPrefix(name, stuff.join(" "), fps, name.contains('loop_'));
-				}else if(type.toLowerCase()=='indices'){
+				}
+				else if (type.toLowerCase() == 'indices')
+				{
 					var shit = stuff.join(" ");
 					var indiceShit = shit.split("/")[1];
 					var prefixShit = shit.split("/")[0];
 					var newArray:Array<Int> = [];
-					for(i in indiceShit.split(" ")){
+					for (i in indiceShit.split(" "))
+					{
 						newArray.push(Std.parseInt(i));
 					};
 					animation.addByIndices(name, prefixShit, newArray, "", fps, name.contains('loop_'));
 				}
 			}
-		} catch(e:Dynamic) {
+		}
+		catch (e:Dynamic)
+		{
 			trace("FUCK" + e);
 		}
 	}
 
 	override function update(elapsed:Float)
 	{
-		if(holding)
-			animation.curAnim.curFrame=0;
+		if (holding)
+			animation.curAnim.curFrame = 0;
 
 		if (!isPlayer)
 		{
-			if(animation.getByName('${animation.curAnim.name}Hold')!=null){
-				animation.paused=false;
-				if(animation.curAnim.name.startsWith("sing") && !animation.curAnim.name.endsWith("Hold") && animation.curAnim.finished){
-					playAnim(animation.curAnim.name + "Hold",true);
+			if (animation.getByName('${animation.curAnim.name}Hold') != null)
+			{
+				animation.paused = false;
+				if (animation.curAnim.name.startsWith("sing") && !animation.curAnim.name.endsWith("Hold") && animation.curAnim.finished)
+				{
+					playAnim(animation.curAnim.name + "Hold", true);
 				}
 			}
 
@@ -835,24 +869,28 @@ class Character extends FlxSprite
 	/**
 	 * FOR GF DANCING SHIT
 	 */
-	public function dance(alt:String="")
+	public function dance(alt:String = "")
 	{
 		if (!debugMode && !disabledDance)
 		{
-			holding=false;
-			if(animation.getByName("idle"+alt)!=null){
-				if (Math.abs(instance.curBeat) % danceSpeed == 0){
-					playAnim("idle"+alt,true);
+			holding = false;
+			if (animation.getByName("idle" + alt) != null)
+			{
+				if (Math.abs(instance.curBeat) % danceSpeed == 0)
+				{
+					playAnim("idle" + alt, true);
 				}
-			}else if (animation.getByName("danceRight"+alt)!=null && animation.getByName("danceLeft"+alt)!=null){
+			}
+			else if (animation.getByName("danceRight" + alt) != null && animation.getByName("danceLeft" + alt) != null)
+			{
 				if (!animation.curAnim.name.startsWith('hair'))
 				{
 					danced = Math.abs(instance.curBeat) % 2 == 1;
 
 					if (danced)
-						playAnim('danceRight'+alt,true);
+						playAnim('danceRight' + alt, true);
 					else
-						playAnim('danceLeft'+alt,true);
+						playAnim('danceLeft' + alt, true);
 				}
 			}
 		}
@@ -860,30 +898,31 @@ class Character extends FlxSprite
 
 	public function playAnim(AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0):Void
 	{
-		if(AnimName.endsWith("miss") && animation.getByName(AnimName)==null ){
-			AnimName = AnimName.substring(0,AnimName.length-4);
+		if (AnimName.endsWith("miss") && animation.getByName(AnimName) == null)
+		{
+			AnimName = AnimName.substring(0, AnimName.length - 4);
 		}
-		
-		//animation.getByName(AnimName).frameRate=animation.getByName(AnimName).frameRate;
-		
+
+		// animation.getByName(AnimName).frameRate=animation.getByName(AnimName).frameRate;
+
 		animation.play(AnimName, Force, Reversed, Frame);
 		curAnim = AnimName;
-		
-		if (curCharacter == 'discord'){
-			
-			if (AnimName == 'hey'){
+
+		if (curCharacter == 'discord')
+		{
+			if (AnimName == 'hey')
+			{
 				alpha = 0.001;
 				PlayState.instance.getSpr('disc_hey').alpha = 1;
 				PlayState.instance.getSpr('disc_hey').animation.play('discord_hey');
 			}
-			if (AnimName == 'singLEFT'){
+			if (AnimName == 'singLEFT')
+			{
 				alpha = 1;
 				PlayState.instance.getSpr('disc_hey').alpha = 0.0001;
 			}
 		}
-		
-		
-		
+
 		var daOffset = animOffsets.get(AnimName);
 		if (animOffsets.exists(AnimName))
 		{
@@ -908,7 +947,6 @@ class Character extends FlxSprite
 				danced = !danced;
 			}
 		}
-		
 	}
 
 	public function addOffset(name:String, x:Float = 0, y:Float = 0)

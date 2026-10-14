@@ -39,45 +39,44 @@ class FreeplayState extends MusicBeatState
 	private var curPlaying:Bool = false;
 
 	private var iconArray:Array<HealthIcon> = [];
+
 	public var dirs = [];
 	public var vinyl:FlxSprite;
 	public var contextBoard:FlxSprite;
 	public var speakers:FlxSprite;
 	public var contexttxt:AttachedFlxText;
+
 	override function create()
 	{
-		
 		var initSonglist = CoolUtil.coolTextFile(Paths.txt('freeplaySonglist'));
 
 		for (i in 0...initSonglist.length)
 		{
 			var data = initSonglist[i].split(" ");
-			var icon = data.splice(0,1)[0];
+			var icon = data.splice(0, 1)[0];
 			songs.push(new SongMetadata(data.join(" "), 1, icon));
 			dirs.push("assets");
 		}
 
-		for (u in TitleState.directories){
+		for (u in TitleState.directories)
+		{
 			var bobsongs = CoolUtil.coolTextFile3('mods/' + u + '/data/freeplaySonglist.txt');
-			
+
 			for (i in 0...bobsongs.length)
 			{
 				var data = bobsongs[i].split(" ");
-				var icon = data.splice(0,1)[0];
+				var icon = data.splice(0, 1)[0];
 				songs.push(new SongMetadata(data.join(" "), 1, icon));
-				dirs.push('mods/'+u);
+				dirs.push('mods/' + u);
 			}
 			TitleState.curDir = "assets";
 		}
-		
-		
 
-			if (FlxG.sound.music != null)
-			{
-				if (!FlxG.sound.music.playing)
-					FlxG.sound.playMusic(Paths.music('freakyMenu'));
-			}
-
+		if (FlxG.sound.music != null)
+		{
+			if (!FlxG.sound.music.playing)
+				FlxG.sound.playMusic(Paths.music('freakyMenu'));
+		}
 
 		#if desktop
 		// Updating Discord Rich Presence
@@ -97,18 +96,14 @@ class FreeplayState extends MusicBeatState
 		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuBGBlue'));
 		add(bg);
 
-		
-		
-		
-		
-		add(CoolUtil.addSprite( -67.5, -84.6, "freeplaymenu/bg", 0));
+		add(CoolUtil.addSprite(-67.5, -84.6, "freeplaymenu/bg", 0));
 		add(speakers = CoolUtil.addAnimPrefix(515, 188, "freeplaymenu/speakers", "speakers", 0, false));
-		vinyl = CoolUtil.addAnimIndices(664,223, "freeplaymenu/vinyl", "vinyl", Character.numArr(0, 19), 0, false);
+		vinyl = CoolUtil.addAnimIndices(664, 223, "freeplaymenu/vinyl", "vinyl", Character.numArr(0, 19), 0, false);
 		vinyl.animation.addByIndices('button', 'vinyl', Character.numArr(20, 29), '', 24, false);
 		add(vinyl);
 		var light = CoolUtil.addSprite(567, -189, "freeplaymenu/light", 0);
 		light.blend = 'add';
-		contextBoard = CoolUtil.addSprite(696,-373, "freeplaymenu/contextBoard", 0);
+		contextBoard = CoolUtil.addSprite(696, -373, "freeplaymenu/contextBoard", 0);
 		add(light);
 		contexttxt = new AttachedFlxText(30.15, 223.25, 498.85, "No Context.", 30);
 		contexttxt.font = "Woodrow W00 Reg";
@@ -120,7 +115,6 @@ class FreeplayState extends MusicBeatState
 		grpSongs = new FlxTypedGroup<Alphabet>();
 		add(grpSongs);
 
-		
 		for (i in 0...songs.length)
 		{
 			var songText:Alphabet = new Alphabet(0, (70 * i) + 30, songs[i].songName.split("-").join(" "), true, false);
@@ -210,14 +204,17 @@ class FreeplayState extends MusicBeatState
 				num++;
 		}
 	}
-	override public function beatHit():Void 
+
+	override public function beatHit():Void
 	{
 		super.beatHit();
-		
-				speakers.animation.play('speakers',true);
-		
-		if(vinyl.animation.curAnim.name == 'vinyl') vinyl.animation.play('vinyl',true);
+
+		speakers.animation.play('speakers', true);
+
+		if (vinyl.animation.curAnim.name == 'vinyl')
+			vinyl.animation.play('vinyl', true);
 	}
+
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
@@ -226,7 +223,8 @@ class FreeplayState extends MusicBeatState
 		{
 			FlxG.sound.music.volume += 0.5 * FlxG.elapsed;
 		}
-		if (FlxG.sound.music != null){
+		if (FlxG.sound.music != null)
+		{
 			Conductor.songPosition = FlxG.sound.music.time;
 		}
 		lerpScore = Math.floor(FlxMath.lerp(lerpScore, intendedScore, 0.4));
@@ -251,14 +249,15 @@ class FreeplayState extends MusicBeatState
 		if (FlxG.keys.justPressed.SHIFT)
 		{
 			context = !context;
-				vinyl.animation.play('button');
-			new FlxTimer().start(4/24, function(e:FlxTimer){
-			FlxTween.tween(contextBoard, {y: context?-98.55:-373.5}, 1, {ease:FlxEase.backInOut});
-			
-			new FlxTimer().start(10/24, function(e:FlxTimer){
-				
-				vinyl.animation.play('vinyl',false,false,10);
-			});
+			vinyl.animation.play('button');
+			new FlxTimer().start(4 / 24, function(e:FlxTimer)
+			{
+				FlxTween.tween(contextBoard, {y: context ? -98.55 : -373.5}, 1, {ease: FlxEase.backInOut});
+
+				new FlxTimer().start(10 / 24, function(e:FlxTimer)
+				{
+					vinyl.animation.play('vinyl', false, false, 10);
+				});
 			});
 		}
 
@@ -278,20 +277,24 @@ class FreeplayState extends MusicBeatState
 
 			trace(poop);
 
-			
-			if (FlxG.keys.pressed.CONTROL){
+			if (FlxG.keys.pressed.CONTROL)
+			{
 				FlxG.switchState(new StageDebug("discord"));
-			}else{
-				
+			}
+			else
+			{
 				PlayState.SONG = Song.loadFromJson(poop, songs[curSelected].songName.toLowerCase());
 				PlayState.isStoryMode = false;
 				PlayState.storyDifficulty = curDifficulty;
 
 				PlayState.storyWeek = songs[curSelected].week;
 				trace('CUR WEEK' + PlayState.storyWeek);
-				if (FlxG.keys.pressed.SHIFT){
+				if (FlxG.keys.pressed.SHIFT)
+				{
 					FlxG.switchState(new ChartingState());
-				}else{
+				}
+				else
+				{
 					LoadingState.loadAndSwitchState(new PlayState());
 				}
 			}
@@ -306,15 +309,16 @@ class FreeplayState extends MusicBeatState
 			curDifficulty = 2;
 		if (curDifficulty > 2)
 			curDifficulty = 0;
-			
+
 		var poop:String = Highscore.formatSong(songs[curSelected].songName.toLowerCase(), curDifficulty);
-		if (!FileSystem.exists(TitleState.curDir+'/data/'+songs[curSelected].songName.toLowerCase()+'/'+poop+'.json')){
+		if (!Paths.exists(TitleState.curDir + '/data/' + songs[curSelected].songName.toLowerCase() + '/' + poop + '.json'))
+		{
 			curDifficulty = 1;
 		}
 		#if !switch
 		intendedScore = Highscore.getScore(songs[curSelected].songName, curDifficulty);
 		#end
-		
+
 		switch (curDifficulty)
 		{
 			case 0:
@@ -329,7 +333,7 @@ class FreeplayState extends MusicBeatState
 	function changeSelection(change:Int = 0)
 	{
 		#if !switch
-		//NGio.logEvent('Fresh');
+		// NGio.logEvent('Fresh');
 		#end
 
 		// NGio.logEvent('Fresh');
@@ -351,11 +355,12 @@ class FreeplayState extends MusicBeatState
 		#end
 		contexttxt.text = Paths.getTextFile(TitleState.curDir + "/data/" + songs[curSelected].songName.toLowerCase() + "/context.txt", true);
 		changeDiff(0);
-		if(OptionUtils.options.freeplayPreview){
+		if (OptionUtils.options.freeplayPreview)
+		{
 			#if PRELOAD_ALL
-				FlxG.sound.playMusic(Paths.inst(songs[curSelected].songName.toLowerCase()), 0);
-				var bpm = Song.loadFromJson(songs[curSelected].songName.toLowerCase(), songs[curSelected].songName.toLowerCase()).bpm;
-				Conductor.changeBPM(bpm);
+			FlxG.sound.playMusic(Paths.inst(songs[curSelected].songName.toLowerCase()), 0);
+			var bpm = Song.loadFromJson(songs[curSelected].songName.toLowerCase(), songs[curSelected].songName.toLowerCase()).bpm;
+			Conductor.changeBPM(bpm);
 			#end
 		}
 

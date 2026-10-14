@@ -5,6 +5,11 @@
 	<app title="Friday Night Funkin'" file="Funkin" packageName="com.ninjamuffin99.funkin" package="com.ninjamuffin99.funkin" main="Main" version="0.2.7.1" company="ninjamuffin99" />
 
 	<!--Switch Export with Unique ApplicationID and Icon-->
+	<section if="android">
+		<app title="Pinkie From FNF" file="Pinkie" package="com.carlos833.pinkiefnf" packageName="com.carlos833.pinkiefnf" />
+		<android minimum-sdk-version="23" target-sdk-version="33" build-sdk-version="33" build-tools-version="33.0.2" gradle-version="7.5.1" gradle-plugin="7.4.2" />
+	</section>
+
 	<set name="APP_ID" value="0x0100f6c013bbc000" />
 
 	<!--The flixel preloader is not accurate in Chrome. You can use it regularly if you embed the swf into a html file
@@ -61,8 +66,8 @@
 		<library name="week1"    preload="false" />
 	</section>
 
-	<assets path="plugins/"             rename=''               />
-	<assets path="dlls/"                rename=''               />
+	<assets if="desktop" path="plugins/"             rename=''               />
+	<assets if="desktop" path="dlls/"                rename=''               />
 	<assets path="assets/songs"    library="songs"    exclude="*.ogg" if="web"/>
 	<assets path="assets/songs"    library="songs"    exclude="*.mp3" unless="web"/>
 	<assets path="assets/shared"   library="shared"   exclude="*.ogg" if="web"/>
@@ -72,7 +77,8 @@
 	<assets path="assets/week1"    library="week1"    exclude="*.ogg" if="web"/>
 	<assets path="assets/week1"    library="week1"    exclude="*.mp3" unless="web"/>
 
-	<assets path='example_mods' rename='mods' embed='false'/>
+	<assets path='example_mods' rename='mods' embed='false' unless='android'/>
+	<assets path='example_mods' rename='mods' embed='true' if='android'/>
 	<assets path='art/readme.txt' rename='do NOT readme.txt' />
 	<!-- <template path='mods' /> -->
 
@@ -99,8 +105,8 @@
 	<haxelib name="faxe" if='switch'/>
 	<haxelib name="polymod"/>
 	<haxelib name="discord_rpc" if="desktop"/>
-	<haxelib name="linc_luajit" if="desktop"/>
-	<haxelib name="hxvm-luajit" if="desktop"/>
+	<haxelib name="linc_luajit" if="desktop || android"/>
+	<haxelib name="hxvm-luajit" if="desktop || android"/>
 	<!-- <haxelib name="hxcpp-debug-server" if="desktop"/> -->
 
 	<!-- <haxelib name="markdown" /> -->

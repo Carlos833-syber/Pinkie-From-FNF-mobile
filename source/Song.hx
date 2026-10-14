@@ -9,9 +9,10 @@ import sys.io.File;
 
 using StringTools;
 
-typedef VelocityChange = {
-		var startTime:Float;
-		var multiplier:Float;
+typedef VelocityChange =
+{
+	var startTime:Float;
+	var multiplier:Float;
 }
 
 typedef SwagSong =
@@ -49,8 +50,8 @@ class Song
 	public var speed:Float = 1;
 	public var noteccale:Float = 0.7;
 	public var initialSpeed:Float = 1;
-	public var sliderVelocities:Array<VelocityChange>=[];
-	public var camBeats:Array<Float>=[];
+	public var sliderVelocities:Array<VelocityChange> = [];
+	public var camBeats:Array<Float> = [];
 	public var player1:String = 'bf';
 	public var player2:String = 'dad';
 	public var version:Int = 1;
@@ -60,22 +61,20 @@ class Song
 		this.song = song;
 		this.notes = notes;
 		this.bpm = bpm;
-		
 	}
 
 	public static function loadFromJson(jsonInput:String, ?folder:String):SwagSong
 	{
-		
-		if (!FileSystem.exists(Paths.json(folder.toLowerCase() + '/' + jsonInput.toLowerCase()))){
+		if (!Paths.exists(Paths.json(folder.toLowerCase() + '/' + jsonInput.toLowerCase())))
+		{
 			return null;
 		}
-		var rawJson = File.getContent(Paths.json(folder.toLowerCase() + '/' + jsonInput.toLowerCase())).trim();
+		var rawJson = Paths.readText(Paths.json(folder.toLowerCase() + '/' + jsonInput.toLowerCase())).trim();
 
 		while (!rawJson.endsWith("}"))
 		{
 			rawJson = rawJson.substr(0, rawJson.length - 1);
 		}
-
 
 		return parseJSONshit(rawJson);
 	}
@@ -84,26 +83,31 @@ class Song
 	{
 		var cumData = Json.parse(rawJson);
 		var swagShit:SwagSong = cast cumData.song;
-		swagShit.initialSpeed=1;
-		if(cumData.sliderVelocities!=null){
+		swagShit.initialSpeed = 1;
+		if (cumData.sliderVelocities != null)
+		{
 			var shit:Array<VelocityChange> = cast cumData.sliderVelocities;
-			shit.sort((a,b)->Std.int(a.startTime-b.startTime));
+			shit.sort((a, b) -> Std.int(a.startTime - b.startTime));
 			swagShit.sliderVelocities = shit;
-
-		}else{
+		}
+		else
+		{
 			trace("SLIDERS");
 			swagShit.sliderVelocities = [
 				{
-					startTime:0,
-					multiplier:1
+					startTime: 0,
+					multiplier: 1
 				}
 			];
 		}
 		swagShit.validScore = true;
-		
-		if (swagShit.noteskin == null) swagShit.noteskin = 'NOTE_assets';
-		if (swagShit.strumskin== null) swagShit.strumskin = 'NOTE_assets';
-		if (swagShit.notescale == null) swagShit.notescale = 0.7;
+
+		if (swagShit.noteskin == null)
+			swagShit.noteskin = 'NOTE_assets';
+		if (swagShit.strumskin == null)
+			swagShit.strumskin = 'NOTE_assets';
+		if (swagShit.notescale == null)
+			swagShit.notescale = 0.7;
 		return swagShit;
 	}
 }

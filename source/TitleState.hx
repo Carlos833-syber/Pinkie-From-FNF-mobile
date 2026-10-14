@@ -26,11 +26,14 @@ import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
+#if !android
 import io.newgrounds.NG;
+#end
 import lime.app.Application;
 import openfl.Assets;
 import sys.io.File;
 import sys.FileSystem;
+
 using StringTools;
 
 class TitleState extends MusicBeatState
@@ -46,22 +49,23 @@ class TitleState extends MusicBeatState
 	var curWacky:Array<String> = [];
 	var introSong:openfl.media.Sound;
 	var wackyImage:FlxSprite;
-	
+
 	public static var curDir = "assets";
-	
+
 	public static var directories = [];
 
 	override public function create():Void
 	{
-	directories = [];
-	
-	for (i in FileSystem.readDirectory("mods")){
-		
-		if (!i.contains(".") && i != "introMod"){
-			directories.push(i);
-			trace(i);
+		directories = [];
+
+		for (i in (FileSystem.exists("mods") && FileSystem.isDirectory("mods") ? FileSystem.readDirectory("mods") : []))
+		{
+			if (!i.contains(".") && i != "introMod")
+			{
+				directories.push(i);
+				trace(i);
+			}
 		}
-	}
 
 		OptionUtils.bindSave();
 		OptionUtils.loadOptions(OptionUtils.options);
@@ -69,18 +73,16 @@ class TitleState extends MusicBeatState
 
 		curWacky = FlxG.random.getObject(getIntroTextShit());
 
-		
 		// DEBUG BULLSHIT
 
 		super.create();
 
-		
 		/*NGio.noLogin(APIStuff.API);
 
-		#if ng
-		var ng:NGio = new NGio(APIStuff.API, APIStuff.EncKey);
-		trace('NEWGROUNDS LOL');
-		#end*/
+			#if ng
+			var ng:NGio = new NGio(APIStuff.API, APIStuff.EncKey);
+			trace('NEWGROUNDS LOL');
+			#end */
 
 		FlxG.save.bind('funkin', 'ninjamuffin99');
 
@@ -99,9 +101,10 @@ class TitleState extends MusicBeatState
 			if (!StoryMenuState.weekUnlocked[0])
 				StoryMenuState.weekUnlocked[0] = true;
 		}
-		if (FlxG.save.data.volume == null) FlxG.save.data.volume = 1;
+		if (FlxG.save.data.volume == null)
+			FlxG.save.data.volume = 1;
 		FlxG.sound.volume = FlxG.save.data.volume;
-introSong = openfl.media.Sound.fromFile(Paths.music('freakyMenu'));
+		introSong = Paths.readSound(Paths.getPath('music/freakyMenu.ogg', openfl.utils.AssetType.MUSIC, null));
 		#if FREEPLAY
 		FlxG.switchState(new FreeplayState());
 		#elseif CHARTING
@@ -116,9 +119,10 @@ introSong = openfl.media.Sound.fromFile(Paths.music('freakyMenu'));
 		#if desktop
 		DiscordClient.initialize();
 
-		Application.current.onExit.add (function (exitCode) {
+		Application.current.onExit.add(function(exitCode)
+		{
 			DiscordClient.shutdown();
-		 });
+		});
 		#end
 	}
 
@@ -134,8 +138,8 @@ introSong = openfl.media.Sound.fromFile(Paths.music('freakyMenu'));
 			var diamond:FlxGraphic = FlxGraphic.fromClass(GraphicTransTileDiamond);
 			diamond.persist = true;
 			diamond.destroyOnNoUse = false;
-			FlxTransitionableState.defaultTransIn = new TransitionData(TILES, FlxColor.BLACK, 0.3, new FlxPoint(0, -1), {asset: diamond, width: 32, height: 32},
-				new FlxRect(-200, -200, FlxG.width * 1.4, FlxG.height * 1.4));
+			FlxTransitionableState.defaultTransIn = new TransitionData(TILES, FlxColor.BLACK, 0.3, new FlxPoint(0, -1),
+				{asset: diamond, width: 32, height: 32}, new FlxRect(-200, -200, FlxG.width * 1.4, FlxG.height * 1.4));
 			FlxTransitionableState.defaultTransOut = new TransitionData(TILES, FlxColor.BLACK, 0.3, new FlxPoint(0, 1),
 				{asset: diamond, width: 32, height: 32}, new FlxRect(-200, -200, FlxG.width * 1.4, FlxG.height * 1.4));
 
@@ -152,41 +156,38 @@ introSong = openfl.media.Sound.fromFile(Paths.music('freakyMenu'));
 			// music.play();
 			FlxG.sound.playMusic(introSong, 1);
 
-			//FlxG.sound.music.fadeIn(4, 0, 0.7);
+			// FlxG.sound.music.fadeIn(4, 0, 0.7);
 		}
 
 		Conductor.changeBPM(110);
 		persistentUpdate = true;
 
-		var bg:FlxSprite = new FlxSprite(-135.6,-118).loadGraphic(Paths.image('SKYY'));
+		var bg:FlxSprite = new FlxSprite(-135.6, -118).loadGraphic(Paths.image('SKYY'));
 		add(bg);
-		
-		var mt:FlxSprite = new FlxSprite(-2018,272).loadGraphic(Paths.image('moutains'));
+
+		var mt:FlxSprite = new FlxSprite(-2018, 272).loadGraphic(Paths.image('moutains'));
 		add(mt);
-		
-		FlxTween.tween(mt,{x:-212.15},45,{type:LOOPING});
-		
-		
-		var houses:FlxSprite = new FlxSprite(-1769.9,-1586.75).loadGraphic(Paths.image('houses'));
+
+		FlxTween.tween(mt, {x: -212.15}, 45, {type: LOOPING});
+
+		var houses:FlxSprite = new FlxSprite(-1769.9, -1586.75).loadGraphic(Paths.image('houses'));
 		add(houses);
 		houses.origin.set();
-		FlxTween.tween(houses,{x:-388.95,y:-170.2},15,{type:LOOPING,ease:FlxEase.linear});
-		FlxTween.tween(houses.scale, {x:0.5, y:0.5}, 15, {type:LOOPING,ease:FlxEase.linear});
-		
-		
+		FlxTween.tween(houses, {x: -388.95, y: -170.2}, 15, {type: LOOPING, ease: FlxEase.linear});
+		FlxTween.tween(houses.scale, {x: 0.5, y: 0.5}, 15, {type: LOOPING, ease: FlxEase.linear});
 
 		logoBl = new FlxSprite(83, 50).loadGraphic(Paths.image('logo'));
 		logoBl.angle = -5;
-		logoBl.antialiasing=true;
-		FlxTween.tween(logoBl,{angle:5},3,{type:PINGPONG,ease:FlxEase.sineInOut});
-		FlxTween.tween(logoBl,{y:100},1,{type:PINGPONG,ease:FlxEase.sineInOut});
+		logoBl.antialiasing = true;
+		FlxTween.tween(logoBl, {angle: 5}, 3, {type: PINGPONG, ease: FlxEase.sineInOut});
+		FlxTween.tween(logoBl, {y: 100}, 1, {type: PINGPONG, ease: FlxEase.sineInOut});
 		// logoBl.screenCenter();
 		// logoBl.color = FlxColor.BLACK;
 
 		gfDance = new FlxSprite(529, 10);
 		gfDance.frames = Paths.getSparrowAtlas('pinkie_start_screen');
-		gfDance.animation.addByIndices('danceLeft', 'pinkoo', Character.numArr(0,15), "", 24, false);
-		gfDance.animation.addByIndices('danceRight', 'pinkoo', Character.numArr(16,31), "", 24, false);
+		gfDance.animation.addByIndices('danceLeft', 'pinkoo', Character.numArr(0, 15), "", 24, false);
+		gfDance.animation.addByIndices('danceRight', 'pinkoo', Character.numArr(16, 31), "", 24, false);
 		gfDance.antialiasing = true;
 		add(gfDance);
 		add(logoBl);
@@ -197,15 +198,7 @@ introSong = openfl.media.Sound.fromFile(Paths.music('freakyMenu'));
 		var logo:FlxSprite = new FlxSprite().loadGraphic(Paths.image('logo'));
 		logo.screenCenter();
 		logo.antialiasing = true;
-		
-		
-		
-		
-		
-		
-		
-		
-		
+
 		// add(logo);
 
 		// FlxTween.tween(logoBl, {y: logoBl.y + 50}, 0.6, {ease: FlxEase.quadInOut, type: PINGPONG});
@@ -244,7 +237,6 @@ introSong = openfl.media.Sound.fromFile(Paths.music('freakyMenu'));
 
 		// credGroup.add(credTextShit);
 	}
-
 
 	function getIntroTextShit():Array<Array<String>>
 	{
@@ -302,11 +294,11 @@ introSong = openfl.media.Sound.fromFile(Paths.music('freakyMenu'));
 		if (pressedEnter && !transitioning && skippedIntro)
 		{
 			#if !switch
-			//NGio.unlockMedal(60960);
+			// NGio.unlockMedal(60960);
 
 			// If it's Friday according to da clock
 			if (Date.now().getDay() == 5)
-				//NGio.unlockMedal(61034);
+				// NGio.unlockMedal(61034);
 			#end
 			FlxFlicker.flicker(titleText);
 
@@ -323,17 +315,17 @@ introSong = openfl.media.Sound.fromFile(Paths.music('freakyMenu'));
 				var version:String = "v" + Application.current.meta.get('version');
 
 				/*if (version.trim() != NGio.GAME_VER_NUMS.trim() && !OutdatedSubState.leftState)
-				{
-					FlxG.switchState(new OutdatedSubState());
-					trace('OLD VERSION!');
-					trace('old ver');
-					trace(version.trim());
-					trace('cur ver');
-					trace(NGio.GAME_VER_NUMS.trim());
-				}
-				else
-				{
-					FlxG.switchState(new MainMenuState());
+					{
+						FlxG.switchState(new OutdatedSubState());
+						trace('OLD VERSION!');
+						trace('old ver');
+						trace(version.trim());
+						trace('cur ver');
+						trace(NGio.GAME_VER_NUMS.trim());
+					}
+					else
+					{
+						FlxG.switchState(new MainMenuState());
 				}*/
 				FlxG.switchState(new MainMenuState());
 			});
@@ -383,7 +375,7 @@ introSong = openfl.media.Sound.fromFile(Paths.music('freakyMenu'));
 		super.beatHit();
 
 		logoBl.scale.set(1.1, 1.1);
-		FlxTween.tween(logoBl.scale, {x:1, y:1}, 2 * (Conductor.stepCrochet / 1000), {ease:FlxEase.circOut});
+		FlxTween.tween(logoBl.scale, {x: 1, y: 1}, 2 * (Conductor.stepCrochet / 1000), {ease: FlxEase.circOut});
 		danceLeft = !danceLeft;
 
 		if (danceLeft)
